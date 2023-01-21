@@ -8,8 +8,8 @@ Allow SIP clients to make PSTN calls without our VOIP server or VPN.
 
 # Overview
 
-Incoming from PSTN => Twilio phone number => Twilio service => Twilio SIP domain => SIP client
-Outgoing from SIP client => Twilio service => PSTN
+- Incoming from PSTN => Twilio phone number => Twilio service => Twilio SIP domain => SIP client
+- Outgoing from SIP client => Twilio service => PSTN
 
 Twilio services used:
 - Voice Sip Domains
@@ -36,6 +36,7 @@ When we develop, we will redeploy the dev service with the serverless toolkit. W
 
 For most of the Twilio API calls, a 400 response because the resource already exists is OK.
 
+---
 
 # Set up dev and prod server components
 
@@ -123,6 +124,8 @@ To do this, redeploy the dev service. Other components won't change (but see not
     twilio serverless:promote --source-environment=dev --environment=prod
 
 
+---
+
 # Add configuration for a new SIP client
 
 We need at least one SIP client, of course. When we add a new one, the only existing component which we change is the credential list. We add a phone number and credential.
@@ -155,6 +158,8 @@ Create a new credential in the credential list. Use the SID found in the previou
     twilio api:core:sip:credential-lists:credentials:create --credential-list-sid <SID> --username '<USERNAME>' --password <PASSWORD>
 
 
+---
+
 # Other things to do
 
 ## Remove credential
@@ -184,16 +189,6 @@ This deletes the entire service, not just an environment. To delete an environme
 
     twilio api:serverless:v1:services:environments:remove --service-sid <SID> --sid <SID>
 
-
-# Set up Linksys PAP ATA device for prod
-
-- nat keep alive: enable
-- sip address: (E.164 number)@direct-futel-prod.sip.twilio.com
-- sip server address: <sip:direct-futel-prod.sip.twilio.com;transport=tls>
-- password: (Twilio credentential list password)
-- Dial plan: (911|933|1[2-9]xxxxxxxxx|0111[2-9]xxxxxxxxx|[2-9]xxxxxxxxx)
-
-For dev, this is direct-futel-prod.sip.twilio.com.
 
 # Logging, monitoring
 
@@ -233,15 +228,5 @@ drawbacks
 - can we refer back if we do that?
 
 Another option is to be less serverless. We can serve our own TwiML with the Twilio SDK in response to a POST from Twilio. This lets us e.g. publish our metrics in the way we are used to, use our server to decide how to react to messages, etc.
-
-Dial plan notes:
-
-    Dial if we match:
-    911
-    933
-    1 followed by 2-9 followed by 9 digits (E.164 with US country code)
-    2-9 followed by 9 digits (NANPA ie US E.164 without country code)
-    0111 followed by 2-9 followed by 9 digits (NANPA international ie 01 then E.164 with US country code)
-
 
 https://www.twilio.com/blog/registering-sip-phone-twilio-inbound-outbound
