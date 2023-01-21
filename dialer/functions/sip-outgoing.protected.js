@@ -12,6 +12,9 @@
 const PNF = require('google-libphonenumber').PhoneNumberFormat;
 const phoneUtil = require('google-libphonenumber').PhoneNumberUtil.getInstance();
 
+const snsClientPath = Runtime.getFunctions()['sns-client'].path;
+const snsClient = require(snsClientPath);
+
 exports.handler = function(context, event, callback) {
     const { From: fromNumber, To: toNumber, SipDomainSid: sipDomainSid } = event;
     const client = context.getTwilioClient();    
@@ -40,5 +43,16 @@ exports.handler = function(context, event, callback) {
         {callerId: fromSipCallerId,
          answerOnBridge: true},
         e164NormalizedNumber);
-    callback(null, twiml);
+
+    let metricEvent = {Channel: fromSipCallerId, UserEvent: "filterdial"};
+    // We are publishing the event before handing off the twiml, which is nonoptimal.
+    // What if there is a service issue or our twiml is not correct?
+    // Ideally we would metric in response to a status callback or something.
+    snsClient.publish(context, metricEvent).then(response => {
+        console.log(response);
+        callback(null, twiml);
+    });
+
+    // We are assuming that if we hit an error before the callback, it gets logged without us
+    // giving it to the callback.
 };

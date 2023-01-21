@@ -49,6 +49,10 @@ Those processes are outlined in later sections.
 
 If changes are made to other components, some of the processes here will be repeated.
 
+## Set up environment secrets
+
+Fill .env to match .env.sample as described in README-aws.
+
 ## Deploy the service to the dev and prod environments
 
 We need to deploy to either environment if they don't exist yet. If we are starting out, we need to create dev and prod. Normally, both environments will always exist from then on, but if for some reason we have destroyed either, we will need to recreate them. It is not an error to deploy to an existing enviroment, this is how we update dev during development, but we normally don't want to update prod except by promoting dev.
@@ -201,16 +205,13 @@ This deletes the entire service, not just an environment. To delete an environme
     - logs/errors
         - fail incoming calls to SIP endpoing (unregistered)
 
-
 # Notes
 
 todo:
-  - put creds in env
-  - populate env creds in ansible vault or something
   - filter pstn phone number on the function
   - use the cli to remove a credential
   - use the cli to CRUD a phone number
-  - environments which aren't referenced may be cleaned up after a period?
+  - metric after call is placed, with a status callback handler or something
 
 advantages
 - general serverless advantages
