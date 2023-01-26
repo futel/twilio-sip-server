@@ -36,6 +36,8 @@ When we develop, we will redeploy the dev service with the serverless toolkit. W
 
 For most of the Twilio API calls, a 400 response because the resource already exists is OK.
 
+We are assuming the default outgoing voice geographic permissions are good. Currently these are US/Canada, Puerto Rico, Mexico, Dominican Republic. There are more NANPA destinations but most of those are expensive.
+
 ---
 
 # Set up dev and prod server components
