@@ -1,13 +1,13 @@
 const { SNSClient, PublishCommand } = require("@aws-sdk/client-sns");
 
-const utilPath = Runtime.getFunctions()['util'].path;
-const util = require(utilPath);
+const futelUtilPath = Runtime.getFunctions()['futel-util'].path;
+const futelUtil = require(futelUtilPath);
 
 const metricHostBase = 'twilio-sip-server';
 
 // Return the appropriate metric event hostname for our environment.
 function getMetricHostname(context) {
-    return metricHostBase + '-' + util.getEnvironment(context);
+    return metricHostBase + '-' + futelUtil.getEnvironment(context);
 }
 
 function eventToMessage(context, event) {
