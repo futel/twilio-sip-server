@@ -17,8 +17,19 @@ const snsClient = require(snsClientPath);
 
 // Return phoneNumber string normalized to E.164.
 function normalizeNumber(phoneNumber) {
+    // This can't be the right way to do this, are there Twilio helpers?
     const rawNumber = phoneUtil.parseAndKeepRawInput(phoneNumber, 'US');
     e164NormalizedNumber = phoneUtil.format(rawNumber, PNF.E164);
+    // not really e.164 are we
+    // temporarily remove +
+    e164NormalizedNumber = e164NormalizedNumber.replace('+', '');
+    // Remove international prefix
+    e164NormalizedNumber = e164NormalizedNumber.replace(/^011/, '');
+    // If we are 10 digits, assume US number without country code and add it.
+    if (e164NormalizedNumber.match(/........../)) {
+        e164NormalizedNumber = '1' + e164NormalizedNumber;
+    }
+    e164NormalizedNumber = '+' + e164NormalizedNumber;
     return e164NormalizedNumber;
 }
 
