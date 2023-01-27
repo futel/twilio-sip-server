@@ -27,13 +27,7 @@ See README-deploy.
 
 ## Test service
 
-Run a local server to interact with.
-
-    twilio serverless:start
-
-also --inspect="", --ngrok
-
-If we had tests, this would be how to run them.
+    npm test
 
 ## Delete a service
 
