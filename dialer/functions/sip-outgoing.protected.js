@@ -5,9 +5,7 @@
 // Otherwise, assume it is a PSTN number and dial it.
 
 // TODO
-// Validate NANPA.
 // Transform 211 etc.
-// Can we send SNS to our monitoring here? Alternative is Twilio console?
 
 const PNF = require('google-libphonenumber').PhoneNumberFormat;
 const phoneUtil = require('google-libphonenumber').PhoneNumberUtil.getInstance();
@@ -15,22 +13,70 @@ const phoneUtil = require('google-libphonenumber').PhoneNumberUtil.getInstance()
 const snsClientPath = Runtime.getFunctions()['sns-client'].path;
 const snsClient = require(snsClientPath);
 
+// area codes of expensive NANPA numbers
+const premiumNanpaCodes = [
+    '900',
+    '976',
+    '242',
+    '246',
+    '264',
+    '268',
+    '284',
+    '345',
+    '441',
+    '473',
+    '649',
+    '664',
+    '721',
+    '758',
+    '767',
+    '784',
+    '809',
+    '829',
+    '849',
+    '868',
+    '869',
+    '876']
+
 // Return phoneNumber string normalized to E.164.
+// E.164 is +[country code][number].
 function normalizeNumber(phoneNumber) {
     // This can't be the right way to do this, are there Twilio helpers?
     const rawNumber = phoneUtil.parseAndKeepRawInput(phoneNumber, 'US');
     e164NormalizedNumber = phoneUtil.format(rawNumber, PNF.E164);
     // not really e.164 are we
-    // temporarily remove +
+    // Temporarily remove + if there.
     e164NormalizedNumber = e164NormalizedNumber.replace('+', '');
-    // Remove international prefix
+    // Remove international prefix if there.
     e164NormalizedNumber = e164NormalizedNumber.replace(/^011/, '');
     // If we are 10 digits, assume US number without country code and add it.
-    if (e164NormalizedNumber.match(/........../)) {
+    if (e164NormalizedNumber.match(/^..........$/)) {
         e164NormalizedNumber = '1' + e164NormalizedNumber;
     }
     e164NormalizedNumber = '+' + e164NormalizedNumber;
     return e164NormalizedNumber;
+}
+
+// Return true if call to number should be denied.
+function filterOutgoingNumber(number) {
+    // Allow 911 and 911 test.
+    if (number == "+911") {
+        return false;
+    } else if (number == "+933") {
+        return false;
+    }
+    if (!number.startsWith("+1")) {
+        // Not US or NANPA.
+        // XXX we want Mexico also, 53, are there others?
+        return true;
+    }
+    premiumNanpaCodes.forEach((prefix) => {
+        if (number.startsWith("+1" + prefix)) {
+            console.log("+1" + prefix);            
+            return true;
+        }
+    });
+    return false;
 }
 
 exports.handler = function(context, event, callback) {
@@ -51,18 +97,23 @@ exports.handler = function(context, event, callback) {
     console.log(`SIP CallerID: ${fromSipCallerId}`);
     console.log(`e164ToNumber: ${e164ToNumber}`);    
 
-    twiml.dial(
-        {callerId: fromSipCallerId, answerOnBridge: true},
-        e164ToNumber);
-
-    let metricEvent = {Channel: fromSipCallerId, UserEvent: "filterdial"};
-    // We are publishing the event before handing off the twiml, which is nonoptimal.
-    // What if there is a service issue or our twiml is not correct?
-    // Ideally we would metric in response to a status callback or something.
-    snsClient.publish(context, metricEvent).then(response => {
+    if (filterOutgoingNumber(e164ToNumber)) {
+        console.log("filtered number " + e164ToNumber);
+        twiml.reject();
         callback(null, twiml);
-    });
+    } else {
+        twiml.dial(
+            {callerId: fromSipCallerId, answerOnBridge: true},
+            e164ToNumber);
 
-    // We are assuming that if we hit an error before the callback, it gets logged without us
-    // giving it to the callback.
+        let metricEvent = {Channel: fromSipCallerId, UserEvent: "filterdial"};
+        // We are publishing the event before handing off the twiml, which is nonoptimal.
+        // What if there is a service issue or our twiml is not correct?
+        // Ideally we would metric in response to a status callback or something.
+        snsClient.publish(context, metricEvent).then(response => {
+            callback(null, twiml);
+        });
+        // We are assuming that if we hit an error before the callback, it gets logged without us
+        // giving it to the callback.
+    }
 };
