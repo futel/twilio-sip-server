@@ -57,9 +57,7 @@ This deletes the entire service, not just an environment. To delete an environme
 # Notes
 
 todo:
-  - filter pstn phone number on the function
-  - use the cli to remove a credential
-  - use the cli to CRUD a phone number
+  - transform 211 etc
   - metric after call is placed, with a status callback handler or something
 
 advantages
@@ -69,14 +67,10 @@ advantages
 drawbacks
 - can't log client de/registration
 - short delay before outgoing ring
-- deployment and update is manual through web gui
-    - we could instead use the Twilio CLI, local console commands
-    - there is also a local test server in the Serverless Toolkit
 
-- can we get our metrics?
 - can we direct to asterisk for features eg pound for menu, operator?
 - can we refer back if we do that?
 
-Another option is to be less serverless. We can serve our own TwiML with the Twilio SDK in response to a POST from Twilio. This lets us e.g. publish our metrics in the way we are used to, use our server to decide how to react to messages, etc.
+Another option is to be less serverless. We can serve our own TwiML with the Twilio SDK in response to a POST from Twilio. This lets us e.g. publish our metrics in the way we are used to, use our server to decide how to react to messages, etc. We would need to run our own server. But if we can put side effects in Twilio callbacks instead of the handler, the server only needs to serve TwiML (and eventually assets) over HTTP. We would need to do our own environments eg dev stage prod.
 
 https://www.twilio.com/blog/registering-sip-phone-twilio-inbound-outbound

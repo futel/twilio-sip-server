@@ -146,3 +146,9 @@ Create a new credential in the credential list. Use the SID found in the previou
 ## Remove credential
 
 Use the web gui.
+
+# Notes
+
+todo:
+  - use the cli to remove a credential
+  - use the cli to CRUD a phone number
