@@ -15,6 +15,13 @@ const phoneUtil = require('google-libphonenumber').PhoneNumberUtil.getInstance()
 const snsClientPath = Runtime.getFunctions()['sns-client'].path;
 const snsClient = require(snsClientPath);
 
+// Return phoneNumber string normalized to E.164.
+function normalizeNumber(phoneNumber) {
+    const rawNumber = phoneUtil.parseAndKeepRawInput(phoneNumber, 'US');
+    e164NormalizedNumber = phoneUtil.format(rawNumber, PNF.E164);
+    return e164NormalizedNumber;
+}
+
 exports.handler = function(context, event, callback) {
     const { From: fromNumber, To: toNumber, SipDomainSid: sipDomainSid } = event;
     const client = context.getTwilioClient();    
@@ -25,31 +32,23 @@ exports.handler = function(context, event, callback) {
     let fromSipCallerId = fromNumber.match(regExNumericSipUri)[1];
     let normalizedToNumber = toNumber.match(regExNumericSipUri)[1];
     //let sipDomain =  toNumber.match(regExNumericSipUri)[3];
+    let e164ToNumber = normalizeNumber(normalizedToNumber);
 
     console.log(`Original From Number: ${fromNumber}`);
     console.log(`Original To Number: ${toNumber}`);
     console.log(`Normalized To Number: ${normalizedToNumber}`);     
     console.log(`SIP CallerID: ${fromSipCallerId}`);
-    
-    // Normalize to number to E.164
-    const rawtoNumber = phoneUtil.parseAndKeepRawInput(
-        normalizedToNumber, 'US');
-    // XXX We should validate for NANPA number here, hopefully we
-    // already do that!
-    // filter_outgoing.agi
-    e164NormalizedNumber = phoneUtil.format(rawtoNumber, PNF.E164);
+    console.log(`e164ToNumber: ${e164ToNumber}`);    
 
     twiml.dial(
-        {callerId: fromSipCallerId,
-         answerOnBridge: true},
-        e164NormalizedNumber);
+        {callerId: fromSipCallerId, answerOnBridge: true},
+        e164ToNumber);
 
     let metricEvent = {Channel: fromSipCallerId, UserEvent: "filterdial"};
     // We are publishing the event before handing off the twiml, which is nonoptimal.
     // What if there is a service issue or our twiml is not correct?
     // Ideally we would metric in response to a status callback or something.
     snsClient.publish(context, metricEvent).then(response => {
-        console.log(response);
         callback(null, twiml);
     });
 
