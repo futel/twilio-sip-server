@@ -12,9 +12,6 @@
 const PNF = require('google-libphonenumber').PhoneNumberFormat;
 const phoneUtil = require('google-libphonenumber').PhoneNumberUtil.getInstance();
 
-const futelUtilPath = Runtime.getFunctions()['futel-util'].path;
-const futelUtil = require(futelUtilPath);
-
 const snsClientPath = Runtime.getFunctions()['sns-client'].path;
 const snsClient = require(snsClientPath);
 
