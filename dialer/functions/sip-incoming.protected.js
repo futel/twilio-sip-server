@@ -6,8 +6,8 @@
 const PNF = require('google-libphonenumber').PhoneNumberFormat;
 const phoneUtil = require('google-libphonenumber').PhoneNumberUtil.getInstance();
 
-const utilPath = Runtime.getFunctions()['util'].path;
-const util = require(utilPath);
+const futelUtilPath = Runtime.getFunctions()['futel-util'].path;
+const futelUtil = require(futelUtilPath);
 const snsClientPath = Runtime.getFunctions()['sns-client'].path;
 const snsClient = require(snsClientPath);
 
@@ -16,7 +16,7 @@ const sipDomainSuffix = "sip.us1.twilio.com";
 
 // Return the appropriate SIP domain hostname for our environment.
 function getSipDomain(context) {
-    return sipDomainSubdomainBase + '-' + util.getEnvironment(context) + '.' + sipDomainSuffix;
+    return sipDomainSubdomainBase + '-' + futelUtil.getEnvironment(context) + '.' + sipDomainSuffix;
 }
 
 exports.handler = function(context, event, callback) {

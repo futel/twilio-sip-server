@@ -1,11 +1,11 @@
 const test = require('node:test');
 const assert = require('assert');
 var sinon = require("sinon");
-const util = require('./util.protected.js');
+const futelUtil = require('./futel-util.protected.js');
 
 test('getEnvironment', (t) => {
     var context = sinon.fake();
     context.DOMAIN_NAME = "dialer-6443-dev.twil.io";
-    environment = util.getEnvironment(context);
+    environment = futelUtil.getEnvironment(context);
     assert.strictEqual(environment, "dev");
 });

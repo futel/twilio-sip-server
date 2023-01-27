@@ -12,6 +12,9 @@
 const PNF = require('google-libphonenumber').PhoneNumberFormat;
 const phoneUtil = require('google-libphonenumber').PhoneNumberUtil.getInstance();
 
+const futelUtilPath = Runtime.getFunctions()['futel-util'].path;
+const futelUtil = require(futelUtilPath);
+
 const snsClientPath = Runtime.getFunctions()['sns-client'].path;
 const snsClient = require(snsClientPath);
 
@@ -24,7 +27,7 @@ exports.handler = function(context, event, callback) {
     // The caller ID is the SIP extension we are calling from, which we assume is E.164.
     let fromSipCallerId = fromNumber.match(regExNumericSipUri)[1];
     let normalizedToNumber = toNumber.match(regExNumericSipUri)[1];
-    let sipDomain =  toNumber.match(regExNumericSipUri)[3];
+    //let sipDomain =  toNumber.match(regExNumericSipUri)[3];
 
     console.log(`Original From Number: ${fromNumber}`);
     console.log(`Original To Number: ${toNumber}`);
