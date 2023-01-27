@@ -13,7 +13,11 @@ const phoneUtil = require('google-libphonenumber').PhoneNumberUtil.getInstance()
 const snsClientPath = Runtime.getFunctions()['sns-client'].path;
 const snsClient = require(snsClientPath);
 
-// area codes of expensive NANPA numbers
+// Allowed country codes.
+const usaCode = '1';
+const mexicoCode = '52';
+
+// Area codes of expensive NANPA numbers.
 const premiumNanpaCodes = [
     '900',
     '976',
@@ -65,9 +69,10 @@ function filterOutgoingNumber(number) {
     } else if (number == "+933") {
         return false;
     }
-    if (!number.startsWith("+1")) {
-        // Not US or NANPA.
-        // XXX we want Mexico also, 53, are there others?
+    if (!(number.startsWith("+" + usaCode) ||
+          number.startsWith("+" + mexicoCode))) {
+        // Not NANPA or Mexico. Note that Twilio might still reject
+        // some NANPA, depending on settings.
         return true;
     }
     premiumNanpaCodes.forEach((prefix) => {
