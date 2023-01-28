@@ -42,7 +42,7 @@ const premiumNanpaCodes = [
     '869',
     '876']
 
-// Return phoneNumber string normalized to E.164.
+// Return phoneNumber string normalized to E.164, if it can be.
 // E.164 is +[country code][number].
 function normalizeNumber(phoneNumber) {
     // This can't be the right way to do this, are there Twilio helpers?
@@ -53,6 +53,12 @@ function normalizeNumber(phoneNumber) {
     e164NormalizedNumber = e164NormalizedNumber.replace('+', '');
     // Remove international prefix if there.
     e164NormalizedNumber = e164NormalizedNumber.replace(/^011/, '');
+    // If we are a 4 digit number starting with 1, presumably we are a
+    // 3 digit number tha that normalizer added a 1 to, so remove it.
+    if (e164NormalizedNumber.match(/^1...$/)) {
+        e164NormalizedNumber = e164NormalizedNumber.substring(1);
+    }
+    
     // If we are 10 digits, assume US number without country code and add it.
     if (e164NormalizedNumber.match(/^..........$/)) {
         e164NormalizedNumber = '1' + e164NormalizedNumber;
@@ -61,12 +67,10 @@ function normalizeNumber(phoneNumber) {
     return e164NormalizedNumber;
 }
 
-// Return true if call to number should be denied.
+// Return true if call to E.164 number should be denied.
 function filterOutgoingNumber(number) {
-    // Allow 911 and 911 test.
-    if (number == "+911") {
-        return false;
-    } else if (number == "+933") {
+    // Allow 911, 211, etc.
+    if (number.match(/^\+...$/)) {
         return false;
     }
     if (!(number.startsWith("+" + usaCode) ||
