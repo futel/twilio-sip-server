@@ -42,6 +42,9 @@ const premiumNanpaCodes = [
     '869',
     '876']
 
+// Map of phone numbers to transform.
+const transformNumbers = {'+211': '+18666986155'}
+
 // Return phoneNumber string normalized to E.164, if it can be.
 // E.164 is +[country code][number].
 function normalizeNumber(phoneNumber) {
@@ -88,6 +91,14 @@ function filterOutgoingNumber(number) {
     return false;
 }
 
+// Return transformed number, if we have one.
+function transformNumber(phoneNumber) {
+    if (phoneNumber in transformNumbers) {
+        return transformNumbers[phoneNumber];
+    }
+    return phoneNumber;
+}
+
 exports.handler = function(context, event, callback) {
     const { From: fromNumber, To: toNumber, SipDomainSid: sipDomainSid } = event;
     const client = context.getTwilioClient();    
@@ -104,16 +115,18 @@ exports.handler = function(context, event, callback) {
     console.log(`Original To Number: ${toNumber}`);
     console.log(`Normalized To Number: ${normalizedToNumber}`);     
     console.log(`SIP CallerID: ${fromSipCallerId}`);
-    console.log(`e164ToNumber: ${e164ToNumber}`);    
+    console.log(`e164ToNumber: ${e164ToNumber}`);
 
     if (filterOutgoingNumber(e164ToNumber)) {
         console.log("filtered number " + e164ToNumber);
         twiml.reject();
         callback(null, twiml);
     } else {
+        let transformedToNumber = transformNumber(e164ToNumber);
+        console.log(`transformedToNumber: ${transformedToNumber}`);
         twiml.dial(
             {callerId: fromSipCallerId, answerOnBridge: true},
-            e164ToNumber);
+            transformedToNumber);
 
         let metricEvent = {Channel: fromSipCallerId, UserEvent: "filterdial"};
         // We are publishing the event before handing off the twiml, which is nonoptimal.

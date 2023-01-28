@@ -57,7 +57,6 @@ This deletes the entire service, not just an environment. To delete an environme
 # Notes
 
 todo:
-  - transform 211 etc
   - metric after call is placed, with a status callback handler or something
 
 advantages
