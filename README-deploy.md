@@ -50,6 +50,8 @@ Deploy to prod.
 
     twilio serverless:deploy --environment=prod
 
+Note that if we are creating a service (instead of updating an existing one), SIP domains and phone numbers pointing to the service must be updated.
+
 ## Get the outgoing SIP function URLs
 
 List the services to find the domain_base.
@@ -69,6 +71,8 @@ Use the domain found in the previous step to determine the outgoing SIP function
     twilio api:core:sip:domains:create --domain-name direct-futel-prod.sip.twilio.com --friendly-name direct-futel-prod --sip-registration --emergency-calling-enabled --voice-method GET --voice-url '<PROD FUNCTION URL>'
 
 Use the SIP function URLs found in the previous step.
+
+Note that if the SIP domain already exists, this will fail instead of updating the domain. The web GUI must be used.
 
 ## List the SIP domains to get the created SID
 
@@ -109,6 +113,20 @@ To do this, redeploy the dev service. Other components won't change (but see not
 # Promote the service dev deployment to the production environment
 
     twilio serverless:promote --source-environment=dev --environment=prod
+
+# Delete a service
+
+List services to find the sid, then delete it.
+
+    twilio serverless list
+    twilio api:serverless:v1:services:remove --sid <SID>
+
+Then delete .twiliodeployinfo.
+
+This deletes the entire service, not just an environment. To delete an environment:
+
+    twilio api:serverless:v1:services:environments:remove --service-sid <SID> --sid <SID>
+
 
 ---
 
@@ -152,3 +170,4 @@ Use the web gui.
 todo:
   - use the cli to remove a credential
   - use the cli to CRUD a phone number
+  - use the cli to update a SIP Domain

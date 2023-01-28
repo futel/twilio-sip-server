@@ -19,7 +19,7 @@ Twilio services used:
 
 We are assuming the default outgoing voice geographic permissions are good. Currently these are US/Canada, Puerto Rico, Mexico, Dominican Republic. There are more NANPA destinations but most of those are expensive.
 
-# Deploy service
+# Deploy, promote, delete service
 
 See README-deploy.
 
@@ -28,20 +28,6 @@ See README-deploy.
 ## Test service
 
     npm test
-
-## Delete a service
-
-List services to find the sid, then delete it.
-
-    twilio serverless list
-    twilio api:serverless:v1:services:remove --sid <SID>
-
-Then delete .twiliodeployinfo.
-
-This deletes the entire service, not just an environment. To delete an environment:
-
-    twilio api:serverless:v1:services:environments:remove --service-sid <SID> --sid <SID>
-
 
 # Logging, monitoring
 
