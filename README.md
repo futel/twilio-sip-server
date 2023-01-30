@@ -19,9 +19,9 @@ Twilio services used:
 
 We are assuming the default outgoing voice geographic permissions are good. Currently these are US/Canada, Puerto Rico, Mexico, Dominican Republic. There are more NANPA destinations but most of those are expensive.
 
-# Deploy, promote, delete service
+# Deploy, promote, delete service, set up client
 
-See README-deploy.
+See README-deploy, README-client.
 
 # Other things to do
 
