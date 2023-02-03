@@ -46,7 +46,7 @@ Deploy to dev.
 
     twilio serverless:deploy
 
-Deploy to prod.
+Deploy to prod. Don't do this if prod is in use except in emergencies!
 
     twilio serverless:deploy --environment=prod
 
