@@ -106,15 +106,20 @@ exports.handler = function(context, event, callback) {
     
     let regExNumericSipUri = /^sip:((\+)?[0-9]+)@(.*)/;
     // The caller ID is the SIP extension we are calling from, which we assume is E.164.
-    let fromSipCallerId = fromNumber.match(regExNumericSipUri)[1];
-    let normalizedToNumber = toNumber.match(regExNumericSipUri)[1];
-    //let sipDomain =  toNumber.match(regExNumericSipUri)[3];
-    let e164ToNumber = normalizeNumber(normalizedToNumber);
-
     console.log(`Original From Number: ${fromNumber}`);
     console.log(`Original To Number: ${toNumber}`);
-    console.log(`Normalized To Number: ${normalizedToNumber}`);     
-    console.log(`SIP CallerID: ${fromSipCallerId}`);
+    let fromSipCallerId = fromNumber.match(regExNumericSipUri)[1];
+    console.log(`SIP CallerID: ${fromSipCallerId}`);    
+    if (!toNumber.match(regExNumericSipUri)) {
+        console.log("Could not find appropriate to number.");
+        twiml.reject();
+        callback(null, twiml);
+        return;
+    }
+    let normalizedToNumber = toNumber.match(regExNumericSipUri)[1];
+    console.log(`Normalized To Number: ${normalizedToNumber}`);
+    //let sipDomain =  toNumber.match(regExNumericSipUri)[3];
+    let e164ToNumber = normalizeNumber(normalizedToNumber);
     console.log(`e164ToNumber: ${e164ToNumber}`);
 
     if (filterOutgoingNumber(e164ToNumber)) {
