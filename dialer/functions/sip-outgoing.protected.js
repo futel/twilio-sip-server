@@ -99,22 +99,22 @@ exports.handler = function(context, event, callback) {
     const client = context.getTwilioClient();    
     let twiml = new Twilio.twiml.VoiceResponse();
     
-    let regExNumericSipUri = /^sip:((\+)?[0-9]+)@(.*)/;
+    let regExSipUri = /^sip:((\+)?[0-9]+)@(.*)/;
     console.log(`Original from number: ${eventFromNumber}`);
     console.log(`Original to number: ${eventToNumber}`);
     // The caller ID is the SIP extension we are calling from, which we assume is E.164.
-    let fromNumber = eventFromNumber.match(regExNumericSipUri)[1];
+    let fromNumber = eventFromNumber.match(regExSipUri)[1];
     console.log(`SIP CallerID: ${fromNumber}`);    
-    if (!eventToNumber.match(regExNumericSipUri)) {
+    if (!eventToNumber.match(regExSipUri)) {
         console.log("Could not parse appropriate to number.");
         twiml.reject();
         callback(null, twiml);
         return;
     }
-    let toNumber = eventToNumber.match(regExNumericSipUri)[1];
+    let toNumber = eventToNumber.match(regExSipUri)[1];
     toNumber = normalizeNumber(toNumber);
     console.log(`Normalized to number: ${toNumber}`);
-    //let sipDomain =  toNumber.match(regExNumericSipUri)[3];
+    //let sipDomain =  toNumber.match(regExSipUri)[3];
 
     if (filterOutgoingNumber(toNumber)) {
         console.log("filtered number " + toNumber);
