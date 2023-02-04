@@ -1,11 +1,6 @@
 // sip-outgoing: termination for calls originating from a SIP client registered to a Twilio SIP domain.
 // Parse the destination number from the SIP URI.
-// If the destination number matches one of our credentials, construct a SIP URI with our SIP domain
-// and dial it.
-// Otherwise, assume it is a PSTN number and dial it.
-
-// TODO
-// Transform 211 etc.
+// Transform to a PSTN number, validate, filter, dial.
 
 const PNF = require('google-libphonenumber').PhoneNumberFormat;
 const phoneUtil = require('google-libphonenumber').PhoneNumberUtil.getInstance();
