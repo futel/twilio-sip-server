@@ -95,24 +95,24 @@ function transformNumber(phoneNumber) {
 }
 
 exports.handler = function(context, event, callback) {
-    const { From: fromNumber, To: toNumber, SipDomainSid: sipDomainSid } = event;
+    const { From: eventFromNumber, To: eventToNumber, SipDomainSid: sipDomainSid } = event;
     const client = context.getTwilioClient();    
     let twiml = new Twilio.twiml.VoiceResponse();
     
     let regExNumericSipUri = /^sip:((\+)?[0-9]+)@(.*)/;
+    console.log(`Original from number: ${eventFromNumber}`);
+    console.log(`Original to number: ${eventToNumber}`);
     // The caller ID is the SIP extension we are calling from, which we assume is E.164.
-    console.log(`Original From Number: ${fromNumber}`);
-    console.log(`Original To Number: ${toNumber}`);
-    let fromSipCallerId = fromNumber.match(regExNumericSipUri)[1];
+    let fromSipCallerId = eventFromNumber.match(regExNumericSipUri)[1];
     console.log(`SIP CallerID: ${fromSipCallerId}`);    
-    if (!toNumber.match(regExNumericSipUri)) {
-        console.log("Could not find appropriate to number.");
+    if (!eventToNumber.match(regExNumericSipUri)) {
+        console.log("Could not parse appropriate to number.");
         twiml.reject();
         callback(null, twiml);
         return;
     }
-    let normalizedToNumber = toNumber.match(regExNumericSipUri)[1];
-    console.log(`Normalized To Number: ${normalizedToNumber}`);
+    let normalizedToNumber = eventToNumber.match(regExNumericSipUri)[1];
+    console.log(`Normalized to number: ${normalizedToNumber}`);
     //let sipDomain =  toNumber.match(regExNumericSipUri)[3];
     let e164ToNumber = normalizeNumber(normalizedToNumber);
     console.log(`e164ToNumber: ${e164ToNumber}`);
@@ -123,7 +123,7 @@ exports.handler = function(context, event, callback) {
         callback(null, twiml);
     } else {
         let transformedToNumber = transformNumber(e164ToNumber);
-        console.log(`transformedToNumber: ${transformedToNumber}`);
+        console.log(`Transformed to number: ${transformedToNumber}`);
         twiml.dial(
             {callerId: fromSipCallerId, answerOnBridge: true},
             transformedToNumber);
@@ -133,7 +133,7 @@ exports.handler = function(context, event, callback) {
         // What if there is a service issue or our twiml is not correct?
         // Ideally we would metric in response to a status callback or something.
         snsClient.publish(context, metricEvent).then(response => {
-            callback(null, twiml);
+            callback(null, twiml); // Must not do anything after callback!
         });
         // We are assuming that if we hit an error before the callback, it gets logged without us
         // giving it to the callback.
