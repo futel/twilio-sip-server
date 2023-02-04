@@ -34,17 +34,10 @@ exports.handler = function(context, event, callback) {
     toE164Normalized = phoneUtil.format(rawtoNumber, PNF.E164);
     console.log(`E.164 To Number: ${toE164Normalized}`);
 
-    twiml.dial({callerId: fromNumber, answerOnBridge: true}).sip(
-        `sip:${toE164Normalized}@${sipDomain}`);
-
-    let metricEvent = {Channel: toE164Normalized, UserEvent: "incoming-dial"};
-    // We are publishing the event before handing off the twiml, which is nonoptimal.
-    // What if there is a service issue or our twiml is not correct?
-    // Ideally we would metric in response to a status callback or something.
-    snsClient.publish(context, metricEvent).then(response => {
-        callback(null, twiml);
-    });
-
-    // We are assuming that if we hit an error before the callback, it gets logged without us
-    // giving it to the callback.
+    twiml.dial(
+        {callerId: fromNumber,
+         answerOnBridge: true,
+         action: '/sip-outgoing-status'}).sip(
+             `sip:${toE164Normalized}@${sipDomain}`);
+    callback(null, twiml); // Must not do anything after callback!
 };   

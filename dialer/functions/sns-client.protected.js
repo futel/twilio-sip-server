@@ -1,3 +1,5 @@
+// Functions to publish metric events to SNS.
+
 const { SNSClient, PublishCommand } = require("@aws-sdk/client-sns");
 
 const futelUtilPath = Runtime.getFunctions()['futel-util'].path;

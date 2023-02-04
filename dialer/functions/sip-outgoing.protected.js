@@ -5,9 +5,6 @@
 const PNF = require('google-libphonenumber').PhoneNumberFormat;
 const phoneUtil = require('google-libphonenumber').PhoneNumberUtil.getInstance();
 
-const snsClientPath = Runtime.getFunctions()['sns-client'].path;
-const snsClient = require(snsClientPath);
-
 // Allowed country codes.
 const usaCode = '1';
 const mexicoCode = '52';
@@ -123,17 +120,13 @@ exports.handler = function(context, event, callback) {
     } else {
         toNumber = transformNumber(toNumber);
         console.log(`Transformed to number: ${toNumber}`);
+        // XXX default timeLimit is 4 hours, should be smaller, in seconds
         twiml.dial(
-            {callerId: fromNumber, answerOnBridge: true},
+            {callerId: fromNumber,
+             answerOnBridge: true,
+             action: '/sip-outgoing-status'},
             toNumber);
-
-        let metricEvent = {Channel: fromNumber, UserEvent: "filterdial"};
-        // We are publishing the event before handing off the twiml, which is nonoptimal.
-        // What if there is a service issue or our twiml is not correct?
-        // Ideally we would metric in response to a status callback or something.
-        snsClient.publish(context, metricEvent).then(response => {
-            callback(null, twiml); // Must not do anything after callback!
-        });
+        callback(null, twiml); // Must not do anything after callback!
         // We are assuming that if we hit an error before the callback, it gets logged without us
         // giving it to the callback.
     }
