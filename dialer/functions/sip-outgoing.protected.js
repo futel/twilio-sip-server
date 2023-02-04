@@ -103,32 +103,31 @@ exports.handler = function(context, event, callback) {
     console.log(`Original from number: ${eventFromNumber}`);
     console.log(`Original to number: ${eventToNumber}`);
     // The caller ID is the SIP extension we are calling from, which we assume is E.164.
-    let fromSipCallerId = eventFromNumber.match(regExNumericSipUri)[1];
-    console.log(`SIP CallerID: ${fromSipCallerId}`);    
+    let fromNumber = eventFromNumber.match(regExNumericSipUri)[1];
+    console.log(`SIP CallerID: ${fromNumber}`);    
     if (!eventToNumber.match(regExNumericSipUri)) {
         console.log("Could not parse appropriate to number.");
         twiml.reject();
         callback(null, twiml);
         return;
     }
-    let normalizedToNumber = eventToNumber.match(regExNumericSipUri)[1];
-    console.log(`Normalized to number: ${normalizedToNumber}`);
+    let toNumber = eventToNumber.match(regExNumericSipUri)[1];
+    toNumber = normalizeNumber(toNumber);
+    console.log(`Normalized to number: ${toNumber}`);
     //let sipDomain =  toNumber.match(regExNumericSipUri)[3];
-    let e164ToNumber = normalizeNumber(normalizedToNumber);
-    console.log(`e164ToNumber: ${e164ToNumber}`);
 
-    if (filterOutgoingNumber(e164ToNumber)) {
-        console.log("filtered number " + e164ToNumber);
+    if (filterOutgoingNumber(toNumber)) {
+        console.log("filtered number " + toNumber);
         twiml.reject();
-        callback(null, twiml);
+        callback(null, twiml); // Must not do anything after callback!
     } else {
-        let transformedToNumber = transformNumber(e164ToNumber);
-        console.log(`Transformed to number: ${transformedToNumber}`);
+        toNumber = transformNumber(toNumber);
+        console.log(`Transformed to number: ${toNumber}`);
         twiml.dial(
-            {callerId: fromSipCallerId, answerOnBridge: true},
-            transformedToNumber);
+            {callerId: fromNumber, answerOnBridge: true},
+            toNumber);
 
-        let metricEvent = {Channel: fromSipCallerId, UserEvent: "filterdial"};
+        let metricEvent = {Channel: fromNumber, UserEvent: "filterdial"};
         // We are publishing the event before handing off the twiml, which is nonoptimal.
         // What if there is a service issue or our twiml is not correct?
         // Ideally we would metric in response to a status callback or something.
