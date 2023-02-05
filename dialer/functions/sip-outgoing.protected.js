@@ -1,11 +1,11 @@
 // sip-outgoing: termination for calls originating from a SIP client registered to a Twilio SIP domain.
 // Parse the destination number from the SIP URI.
-// Transform to a PSTN number, validate, filter, dial.
+// Transform to a PSTN number, validate, filter, dial. Or send to Futel asterisk trunk.
 
 const futelUtilPath = Runtime.getFunctions()['futel-util'].path;
 const futelUtil = require(futelUtilPath);
 
-// We should just use stage on the twilio side.
+// We should just use stage instead of dev on the twilio side.
 const twilioToFutelInstance = {
     'dev': 'stage',
     'prod': 'prod',
