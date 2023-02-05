@@ -18,7 +18,7 @@ function getSipDomain(context) {
 }
 
 exports.handler = function(context, event, callback) {
-    const client = context.getTwilioClient();    
+    const client = context.getTwilioClient();
     let twiml = new Twilio.twiml.VoiceResponse();
     const { From: fromNumber, To: eventToNumber, SipDomainSid: sipDomainSid } = event;
     let sipDomain = getSipDomain(context);

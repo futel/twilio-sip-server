@@ -35,7 +35,7 @@ const transformNumbers = {'+211': '+18666986155'}
 
 // Return a string corresponding to our environment eg 'dev', 'prod'
 function getEnvironment(context) {
-    let domainUri = /^[a-z]sip:((\+)?[0-9]+)@(.*)/;
+    //let domainUri = /^[a-z]sip:((\+)?[0-9]+)@(.*)/;
     // dialer-6443-dev.twil.io
     let environment = context.DOMAIN_NAME;
     // dialer-6443-dev
@@ -78,35 +78,36 @@ function transformNumber(phoneNumber) {
 // E.164 is +[country code][number].
 function normalizeNumber(phoneNumber) {
     // This can't be the right way to do this, are there Twilio helpers?
-    const rawNumber = phoneUtil.parseAndKeepRawInput(phoneNumber, 'US');
-    e164NormalizedNumber = phoneUtil.format(rawNumber, PNF.E164);
+    var number = phoneNumber;
+    number = phoneUtil.parseAndKeepRawInput(number, 'US');
+    number = phoneUtil.format(number, PNF.E164);
     // not really e.164 are we
     // Temporarily remove + if there.
-    e164NormalizedNumber = e164NormalizedNumber.replace('+', '');
+    number = number.replace('+', '');
     // Remove international prefix if there.
-    e164NormalizedNumber = e164NormalizedNumber.replace(/^011/, '');
+    number = number.replace(/^011/, '');
     // If we are a 4 digit number starting with 1, presumably we are a
     // 3 digit number tha that normalizer added a 1 to, so remove it.
-    if (e164NormalizedNumber.match(/^1...$/)) {
-        e164NormalizedNumber = e164NormalizedNumber.substring(1);
+    if (number.match(/^1...$/)) {
+        number = number.substring(1);
     }
     
     // If we are 10 digits, assume US number without country code and add it.
-    if (e164NormalizedNumber.match(/^..........$/)) {
-        e164NormalizedNumber = '1' + e164NormalizedNumber;
+    if (number.match(/^..........$/)) {
+        number = '1' + number;
     }
-    e164NormalizedNumber = '+' + e164NormalizedNumber;
-    return e164NormalizedNumber;
+    number = '+' + number;
+    return number;
 }
 
 // Return an extension extracted from sipUri, or null.
 function sipToExtension(sipUri) {
-    const regExSipUri = /^sip:((\+)?[0-9]+)@(.*)/;
+    const regExSipUri = /^sip:((\+)?.*)@(.*)/;
     if (!sipUri.match(regExSipUri)) {
         console.log("Could not parse appropriate extension from SIP URI.");
         return null;
     }
-    return sipUri.match(regExSipUri)[1];    
+    return decodeURIComponent(sipUri.match(regExSipUri)[1]);
 }
 
 exports.getEnvironment = getEnvironment;

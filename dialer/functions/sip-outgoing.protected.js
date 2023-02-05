@@ -5,10 +5,18 @@
 const futelUtilPath = Runtime.getFunctions()['futel-util'].path;
 const futelUtil = require(futelUtilPath);
 
+// We should just use stage on the twilio side.
+const twilioToFutelInstance = {
+    'dev': 'stage',
+    'prod': 'prod',
+};
+
 exports.handler = function(context, event, callback) {
     const { From: eventFromNumber, To: eventToNumber, SipDomainSid: sipDomainSid } = event;
     const client = context.getTwilioClient();    
     let twiml = new Twilio.twiml.VoiceResponse();
+    let instance = twilioToFutelInstance[
+        futelUtil.getEnvironment(context)];
     
     console.log(`Original from number: ${eventFromNumber}`);
     console.log(`Original to number: ${eventToNumber}`);
@@ -21,11 +29,28 @@ exports.handler = function(context, event, callback) {
         twiml.reject();
         callback(null, twiml);
         return;
-    }        
-    toNumber = futelUtil.normalizeNumber(toNumber);
+    }
+    try {
+        toNumber = futelUtil.normalizeNumber(toNumber);
+    } catch (error) {
+        // If we couldn't do a normalization step, hopefully we don't care
+        // about any of the others.
+    }
     console.log(`Normalized to number: ${toNumber}`);
 
-    if (futelUtil.filterOutgoingNumber(toNumber)) {
+    if (toNumber == "#") {
+        // Send caller to the trunk.
+        console.log(`trunk to number: ${toNumber}`);
+        let password = context.FUTEL_SIP_PASSWORD
+        let username = "704"; // XXX testing, get a dedicated ext
+        // XXX how do we state destination
+        let sipUri = `sip:999@futel-${instance}.phu73l.net;region=us2`;
+        twiml.dial(
+            {answerOnBridge: true, action: '/sip-outgoing-status'}).sip(
+                {username:username, password: password},
+                sipUri);
+        callback(null, twiml); // Must not do anything after callback!
+    } else if (futelUtil.filterOutgoingNumber(toNumber)) {
         console.log("filtered number " + toNumber);
         twiml.reject();
         callback(null, twiml); // Must not do anything after callback!
@@ -39,7 +64,5 @@ exports.handler = function(context, event, callback) {
              action: '/sip-outgoing-status'},
             toNumber);
         callback(null, twiml); // Must not do anything after callback!
-        // We are assuming that if we hit an error before the callback, it gets logged without us
-        // giving it to the callback.
     }
 };
