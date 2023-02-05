@@ -2,36 +2,8 @@
 // Parse the destination number from the SIP URI.
 // Transform to a PSTN number, validate, filter, dial.
 
-const PNF = require('google-libphonenumber').PhoneNumberFormat;
-const phoneUtil = require('google-libphonenumber').PhoneNumberUtil.getInstance();
-
 const futelUtilPath = Runtime.getFunctions()['futel-util'].path;
 const futelUtil = require(futelUtilPath);
-
-// Return phoneNumber string normalized to E.164, if it can be.
-// E.164 is +[country code][number].
-function normalizeNumber(phoneNumber) {
-    // This can't be the right way to do this, are there Twilio helpers?
-    const rawNumber = phoneUtil.parseAndKeepRawInput(phoneNumber, 'US');
-    e164NormalizedNumber = phoneUtil.format(rawNumber, PNF.E164);
-    // not really e.164 are we
-    // Temporarily remove + if there.
-    e164NormalizedNumber = e164NormalizedNumber.replace('+', '');
-    // Remove international prefix if there.
-    e164NormalizedNumber = e164NormalizedNumber.replace(/^011/, '');
-    // If we are a 4 digit number starting with 1, presumably we are a
-    // 3 digit number tha that normalizer added a 1 to, so remove it.
-    if (e164NormalizedNumber.match(/^1...$/)) {
-        e164NormalizedNumber = e164NormalizedNumber.substring(1);
-    }
-    
-    // If we are 10 digits, assume US number without country code and add it.
-    if (e164NormalizedNumber.match(/^..........$/)) {
-        e164NormalizedNumber = '1' + e164NormalizedNumber;
-    }
-    e164NormalizedNumber = '+' + e164NormalizedNumber;
-    return e164NormalizedNumber;
-}
 
 exports.handler = function(context, event, callback) {
     const { From: eventFromNumber, To: eventToNumber, SipDomainSid: sipDomainSid } = event;
@@ -51,7 +23,7 @@ exports.handler = function(context, event, callback) {
         return;
     }
     let toNumber = eventToNumber.match(regExSipUri)[1];
-    toNumber = normalizeNumber(toNumber);
+    toNumber = futelUtil.normalizeNumber(toNumber);
     console.log(`Normalized to number: ${toNumber}`);
     //let sipDomain =  toNumber.match(regExSipUri)[3];
 
