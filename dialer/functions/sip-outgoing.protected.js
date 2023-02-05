@@ -5,37 +5,8 @@
 const PNF = require('google-libphonenumber').PhoneNumberFormat;
 const phoneUtil = require('google-libphonenumber').PhoneNumberUtil.getInstance();
 
-// Allowed country codes.
-const usaCode = '1';
-const mexicoCode = '52';
-
-// Area codes of expensive NANPA numbers.
-const premiumNanpaCodes = [
-    '900',
-    '976',
-    '242',
-    '246',
-    '264',
-    '268',
-    '284',
-    '345',
-    '441',
-    '473',
-    '649',
-    '664',
-    '721',
-    '758',
-    '767',
-    '784',
-    '809',
-    '829',
-    '849',
-    '868',
-    '869',
-    '876']
-
-// Map of phone numbers to transform.
-const transformNumbers = {'+211': '+18666986155'}
+const futelUtilPath = Runtime.getFunctions()['futel-util'].path;
+const futelUtil = require(futelUtilPath);
 
 // Return phoneNumber string normalized to E.164, if it can be.
 // E.164 is +[country code][number].
@@ -62,35 +33,6 @@ function normalizeNumber(phoneNumber) {
     return e164NormalizedNumber;
 }
 
-// Return true if call to E.164 number should be denied.
-function filterOutgoingNumber(number) {
-    // Allow 911, 211, etc.
-    if (number.match(/^\+...$/)) {
-        return false;
-    }
-    if (!(number.startsWith("+" + usaCode) ||
-          number.startsWith("+" + mexicoCode))) {
-        // Not NANPA or Mexico. Note that Twilio might still reject
-        // some NANPA, depending on settings.
-        return true;
-    }
-    premiumNanpaCodes.forEach((prefix) => {
-        if (number.startsWith("+1" + prefix)) {
-            console.log("+1" + prefix);            
-            return true;
-        }
-    });
-    return false;
-}
-
-// Return transformed number, if we have one.
-function transformNumber(phoneNumber) {
-    if (phoneNumber in transformNumbers) {
-        return transformNumbers[phoneNumber];
-    }
-    return phoneNumber;
-}
-
 exports.handler = function(context, event, callback) {
     const { From: eventFromNumber, To: eventToNumber, SipDomainSid: sipDomainSid } = event;
     const client = context.getTwilioClient();    
@@ -113,12 +55,12 @@ exports.handler = function(context, event, callback) {
     console.log(`Normalized to number: ${toNumber}`);
     //let sipDomain =  toNumber.match(regExSipUri)[3];
 
-    if (filterOutgoingNumber(toNumber)) {
+    if (futelUtil.filterOutgoingNumber(toNumber)) {
         console.log("filtered number " + toNumber);
         twiml.reject();
         callback(null, twiml); // Must not do anything after callback!
     } else {
-        toNumber = transformNumber(toNumber);
+        toNumber = futelUtil.transformNumber(toNumber);
         console.log(`Transformed to number: ${toNumber}`);
         // XXX default timeLimit is 4 hours, should be smaller, in seconds
         twiml.dial(
