@@ -8,8 +8,6 @@ const phoneUtil = require('google-libphonenumber').PhoneNumberUtil.getInstance()
 
 const futelUtilPath = Runtime.getFunctions()['futel-util'].path;
 const futelUtil = require(futelUtilPath);
-const snsClientPath = Runtime.getFunctions()['sns-client'].path;
-const snsClient = require(snsClientPath);
 
 const sipDomainSubdomainBase = "direct-futel";
 const sipDomainSuffix = "sip.us1.twilio.com";
@@ -22,22 +20,20 @@ function getSipDomain(context) {
 exports.handler = function(context, event, callback) {
     const client = context.getTwilioClient();    
     let twiml = new Twilio.twiml.VoiceResponse();
-    const { From: fromNumber, To: toNumber, SipDomainSid: sipDomainSid } = event;
+    const { From: fromNumber, To: eventToNumber, SipDomainSid: sipDomainSid } = event;
     let sipDomain = getSipDomain(context);
 
     console.log(`Original From Number: ${fromNumber}`);
-    console.log(`Original To Number: ${toNumber}`);
+    console.log(`Original To Number: ${eventToNumber}`);
     console.log(`SIP domain: ${sipDomain}`);    
-    
-    // Normalize to number to E.164, that is how our SIP extensions are formatted.
-    const rawtoNumber = phoneUtil.parseAndKeepRawInput(toNumber, 'US');
-    toE164Normalized = phoneUtil.format(rawtoNumber, PNF.E164);
-    console.log(`E.164 To Number: ${toE164Normalized}`);
+
+    let toNumber = futelUtil.normalizeNumber(eventToNumber);
+    console.log(`Normlized to number ${toNumber}`);
 
     twiml.dial(
         {callerId: fromNumber,
          answerOnBridge: true,
          action: '/sip-outgoing-status'}).sip(
-             `sip:${toE164Normalized}@${sipDomain}`);
+             `sip:${toNumber}@${sipDomain}`);
     callback(null, twiml); // Must not do anything after callback!
 };   
