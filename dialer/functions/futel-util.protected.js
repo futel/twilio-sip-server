@@ -99,7 +99,18 @@ function normalizeNumber(phoneNumber) {
     return e164NormalizedNumber;
 }
 
+// Return an extension extracted from sipUri, or null.
+function sipToExtension(sipUri) {
+    const regExSipUri = /^sip:((\+)?[0-9]+)@(.*)/;
+    if (!sipUri.match(regExSipUri)) {
+        console.log("Could not parse appropriate extension from SIP URI.");
+        return null;
+    }
+    return sipUri.match(regExSipUri)[1];    
+}
+
 exports.getEnvironment = getEnvironment;
 exports.filterOutgoingNumber = filterOutgoingNumber;
 exports.transformNumber = transformNumber;
 exports.normalizeNumber = normalizeNumber;
+exports.sipToExtension = sipToExtension;

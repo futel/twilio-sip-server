@@ -10,22 +10,20 @@ exports.handler = function(context, event, callback) {
     const client = context.getTwilioClient();    
     let twiml = new Twilio.twiml.VoiceResponse();
     
-    let regExSipUri = /^sip:((\+)?[0-9]+)@(.*)/;
     console.log(`Original from number: ${eventFromNumber}`);
     console.log(`Original to number: ${eventToNumber}`);
     // The caller ID is the SIP extension we are calling from, which we assume is E.164.
-    let fromNumber = eventFromNumber.match(regExSipUri)[1];
+    let fromNumber = futelUtil.sipToExtension(eventFromNumber);
     console.log(`SIP CallerID: ${fromNumber}`);    
-    if (!eventToNumber.match(regExSipUri)) {
+    let toNumber = futelUtil.sipToExtension(eventToNumber);
+    if (!toNumber) {
         console.log("Could not parse appropriate to number.");
         twiml.reject();
         callback(null, twiml);
         return;
-    }
-    let toNumber = eventToNumber.match(regExSipUri)[1];
+    }        
     toNumber = futelUtil.normalizeNumber(toNumber);
     console.log(`Normalized to number: ${toNumber}`);
-    //let sipDomain =  toNumber.match(regExSipUri)[3];
 
     if (futelUtil.filterOutgoingNumber(toNumber)) {
         console.log("filtered number " + toNumber);
