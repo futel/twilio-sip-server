@@ -5,6 +5,8 @@
 const futelUtilPath = Runtime.getFunctions()['futel-util'].path;
 const futelUtil = require(futelUtilPath);
 
+const futelExtension = "outgoing_portland"; // testing
+
 // We should just use stage instead of dev on the twilio side.
 const twilioToFutelInstance = {
     'dev': 'stage',
@@ -44,7 +46,7 @@ exports.handler = function(context, event, callback) {
         let password = context.FUTEL_SIP_PASSWORD
         let username = "704"; // XXX testing, get a dedicated ext
         // XXX how do we state destination
-        let sipUri = `sip:999@futel-${instance}.phu73l.net;region=us2`;
+        let sipUri = `sip:${futelExtension}@futel-${instance}.phu73l.net;region=us2`;
         twiml.dial(
             {answerOnBridge: true, action: '/sip-outgoing-status'}).sip(
                 {username:username, password: password},
