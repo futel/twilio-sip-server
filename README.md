@@ -3,7 +3,7 @@
 
 # Objectives
 
-Allow SIP clients to make PSTN calls without our VOIP server or VPN.
+Allow SIP clients to register to Twilio SIP Domains and make outgoing and incoming calls without our VOIP server or VPN. Incoming calls from a Twilio phone number ring the client. Outgoing calls go to PSTN, or get forwarded to our SIP server.
 
 
 # Overview
@@ -42,19 +42,13 @@ See README-deploy, README-client.
 
 # Notes
 
-todo:
-  - metric after call is placed, with a status callback handler or something
-
 advantages
 - general serverless advantages
 - separate dialtone only clients from asterisk
 
 drawbacks
-- can't log client de/registration
+- can't log client de/registration?
 - short delay before outgoing ring
-
-- can we direct to asterisk for features eg pound for menu, operator?
-- can we refer back if we do that?
 
 Another option is to be less serverless. We can serve our own TwiML with the Twilio SDK in response to a POST from Twilio. This lets us e.g. publish our metrics in the way we are used to, use our server to decide how to react to messages, etc. We would need to run our own server. But if we can put side effects in Twilio callbacks instead of the handler, the server only needs to serve TwiML (and eventually assets) over HTTP. We would need to do our own environments eg dev stage prod.
 
