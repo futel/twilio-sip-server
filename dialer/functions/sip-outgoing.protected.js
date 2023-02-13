@@ -7,18 +7,11 @@ const futelUtil = require(futelUtilPath);
 
 const futelExtension = "outgoing_portland"; // testing
 
-// We should just use stage instead of dev on the twilio side.
-const twilioToFutelInstance = {
-    'dev': 'stage',
-    'prod': 'prod',
-};
-
 exports.handler = function(context, event, callback) {
     const { From: eventFromNumber, To: eventToNumber, SipDomainSid: sipDomainSid } = event;
     const client = context.getTwilioClient();    
     let twiml = new Twilio.twiml.VoiceResponse();
-    let instance = twilioToFutelInstance[
-        futelUtil.getEnvironment(context)];
+    let instance = futelUtil.getEnvironment(context);
     
     console.log(`Original from number: ${eventFromNumber}`);
     console.log(`Original to number: ${eventToNumber}`);
@@ -45,7 +38,6 @@ exports.handler = function(context, event, callback) {
         console.log(`trunk to number: ${toNumber}`);
         let password = context.FUTEL_SIP_PASSWORD
         let username = "704"; // XXX testing, get a dedicated ext
-        // XXX how do we state destination
         let sipUri = `sip:${futelExtension}@futel-${instance}.phu73l.net;region=us2`;
         twiml.dial(
             {answerOnBridge: true, action: '/sip-outgoing-status'}).sip(

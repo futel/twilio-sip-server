@@ -11,21 +11,23 @@ This document covers initial deployment, deployment of the client components of 
 
 # Deploy and development notes
 
-We will set up a service with a dev environment, and other components for the dev and prod servers. For components other than the service, the dev and prod components are identical except for which other components they reference.
+We will set up a service with a stage environment, and other components for the stage and prod servers. For components other than the service, the stage and prod components are identical except for which other components they reference.
 
-The initial deploy process is to create the dev components and at least one SIP credential, then promote the dev service to prod. We expect to add more SIP credentials as clients are added.
+The initial deploy process is to create the stage components and at least one SIP credential, then promote the stage service to prod. We expect to add more SIP credentials as clients are added.
 
-When we develop, we will redeploy the dev service with the serverless toolkit. When ready, the dev service is again promoted to prod. We shouldn't have to redeploy or change any other components, but nothing gets promoted except the service. If we change anything other than the service, we will presumably be changing the dev components, then changing the prod components to match dev when we promote the dev service to prod.
+When we develop, we will redeploy the stage service with the serverless toolkit. When ready, the stage service is again promoted to prod. We shouldn't have to redeploy or change any other components, but nothing gets promoted except the service. If we change anything other than the service, we will presumably be changing the stage components, then changing the prod components to match stage when we promote the stage service to prod.
+
+The stage and prod deployments communicate with the corresponding deploymnets on the Asterisk side. We develop on stage, it would be more correct to have a separate dev deployment.
 
 For most of the Twilio API calls, a 400 response because the resource already exists is OK.
 
 ---
 
-# Set up dev and prod server components
+# Set up stage and prod server components
 
 This process should only need to be done once. After this is done, the expected process is:
 
-- Update the Twilio service, deploy to dev, then promote to prod
+- Update the Twilio service, deploy to stage, then promote to prod
 - Add a new SIP client by creating a phone number and credential, and updating the credential list
 
 Those processes are outlined in later sections.
@@ -36,15 +38,15 @@ If changes are made to other components, some of the processes here will be repe
 
 Fill .env to match .env.sample as described in README-aws.
 
-## Deploy the service to the dev and prod environments
+## Deploy the service to the stage and prod environments
 
-We need to deploy to either environment if they don't exist yet. If we are starting out, we need to create dev and prod. Normally, both environments will always exist from then on, but if for some reason we have destroyed either, we will need to recreate them. It is not an error to deploy to an existing enviroment, this is how we update dev during development, but we normally don't want to update prod except by promoting dev.
+We need to deploy to either environment if they don't exist yet. If we are starting out, we need to create stage and prod. Normally, both environments will always exist from then on, but if for some reason we have destroyed either, we will need to recreate them. It is not an error to deploy to an existing enviroment, this is how we update stage during development, but we normally don't want to update prod except by promoting stage.
 
 All serverless toolkit commands are executed in the dialer directory. Api commands can be executed in any directory.
 
-Deploy to dev.
+Deploy to stage.
 
-    twilio serverless:deploy
+    twilio serverless:deploy --environment=stage
 
 Deploy to prod. Don't do this if prod is in use except in emergencies!
 
@@ -54,25 +56,21 @@ Note that if we are creating a service (instead of updating an existing one), SI
 
 ## Get the outgoing SIP function URLs
 
-List the services to find the domain_base.
+List the environemnts to find the environment URL.
 
-    twilio serverless list services
+    twilio serverless:list environments
 
-The outgoing dev SIP function URL is https://<domain_base>-dev.twil.io/sip-outgoing.
+The outgoing SIP function URLs are https://<environment URL>/sip-outgoing, e.g. https://dialer-1780-stage.twil.io/sip-outgoing.
 
-The outgoing prod SIP function URL is https://<domain_base>-prod.twil.io/sip-outgoing.
+## Create new stage and prod SIP domains
 
-## Create new dev and prod SIP domains
-
-Use the domain found in the previous step to determine the outgoing SIP function URLs.
-
-    twilio api:core:sip:domains:create --domain-name direct-futel-dev.sip.twilio.com --friendly-name direct-futel-dev --sip-registration --emergency-calling-enabled --voice-method GET --voice-url '<DEV FUNCTION URL>'
+    twilio api:core:sip:domains:create --domain-name direct-futel-stage.sip.twilio.com --friendly-name direct-futel-stage --sip-registration --emergency-calling-enabled --voice-method GET --voice-url '<STAGE FUNCTION URL>'
 
     twilio api:core:sip:domains:create --domain-name direct-futel-prod.sip.twilio.com --friendly-name direct-futel-prod --sip-registration --emergency-calling-enabled --voice-method GET --voice-url '<PROD FUNCTION URL>'
 
 Use the SIP function URLs found in the previous step.
 
-Note that if the SIP domain already exists, this will fail instead of updating the domain. The web GUI must be used.
+Note that if the SIP domain already exists, this will fail instead of updating the domain. The web GUI must be used to make changes, if that is necessary.
 
 ## List the SIP domains to get the created SID
 
@@ -88,26 +86,26 @@ If we created a new SIP domain in the last step, the SID was listed there. Other
 
     twilio api:core:sip:credential-lists:list
 
-## Create an auth registrations credential list mapping for dev and prod SIP domains
+## Create an auth registrations credential list mapping for stage and prod SIP domains
 
 Use the SIDs of the domains and credential list found in the previous steps.
 
-    twilio api:core:sip:domains:auth:registrations:credential-list-mappings:create --domain-sid <DEV DOMAIN SID> --credential-list-sid <CREDENTIAL LIST SID>
+    twilio api:core:sip:domains:auth:registrations:credential-list-mappings:create --domain-sid <STAGE DOMAIN SID> --credential-list-sid <CREDENTIAL LIST SID>
 
     twilio api:core:sip:domains:auth:registrations:credential-list-mappings:create --domain-sid <PROD DOMAIN SID> --credential-list-sid <CREDENTIAL LIST SID>
 
-## Set voice authentication credentials for dev and prod SIP domains
+## Set voice authentication credentials for stage and prod SIP domains
 
-Visit the GUI for the dev and prod sip domains and add the same credential list to "voice authentication", then save.
+Visit the GUI for the dev and prod sip domains and add the same "sip-direct" credential list to "voice authentication", then save.
 
 There doesn't seem to be any other way to do this.
 
 
-# Create a new dev deployment, or update an existing one
+# Create a new stage deployment, or update an existing one
 
 To do this, redeploy the dev service. Other components won't change (but see notes above).
 
-    twilio serverless:deploy
+    twilio serverless:deploy --environment=stage
 
 
 # Promote the service dev deployment to the production environment
@@ -146,7 +144,7 @@ Create new phone number
     - configure with: Webhook, TwiML Bin, Function, Studio Flow, Proxy Service
     - a call comes in: Function
     - service: dialer
-    - environment: prod-environment (or dev-environment)
+    - environment: prod-environment (or stage-environment)
     - function path: /sip-incoming
 
 ## Create credential
