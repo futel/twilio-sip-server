@@ -56,7 +56,7 @@ Note that if we are creating a service (instead of updating an existing one), SI
 
 List the services to find the domain_base.
 
-    twilio serverless list services --output-format=json
+    twilio serverless list services
 
 The outgoing dev SIP function URL is https://<domain_base>-dev.twil.io/sip-outgoing.
 
