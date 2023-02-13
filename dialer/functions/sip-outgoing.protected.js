@@ -38,12 +38,9 @@ exports.handler = function(context, event, callback) {
         console.log(`trunk to number: ${toNumber}`);
         let extensionMap = JSON.parse(extensionMapAsset.open());
         let futelExtension = extensionMap[fromNumber].outgoing;
-        let password = context.FUTEL_SIP_PASSWORD
-        let username = "704"; // XXX testing, get a dedicated ext
         let sipUri = `sip:${futelExtension}@futel-${instance}.phu73l.net;region=us2`;
         twiml.dial(
             {answerOnBridge: true, action: '/sip-outgoing-status'}).sip(
-                {username:username, password: password},
                 sipUri);
         callback(null, twiml); // Must not do anything after callback!
     } else if (futelUtil.filterOutgoingNumber(toNumber)) {
