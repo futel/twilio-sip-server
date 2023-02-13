@@ -5,7 +5,7 @@
 const futelUtilPath = Runtime.getFunctions()['futel-util'].path;
 const futelUtil = require(futelUtilPath);
 
-const futelExtension = "outgoing_portland"; // testing
+const extensionMapAsset = Runtime.getAssets()['/extensions.json'];
 
 exports.handler = function(context, event, callback) {
     const { From: eventFromNumber, To: eventToNumber, SipDomainSid: sipDomainSid } = event;
@@ -36,6 +36,8 @@ exports.handler = function(context, event, callback) {
     if (toNumber == "#") {
         // Send caller to the trunk.
         console.log(`trunk to number: ${toNumber}`);
+        let extensionMap = JSON.parse(extensionMapAsset.open());
+        let futelExtension = extensionMap[fromNumber].outgoing;
         let password = context.FUTEL_SIP_PASSWORD
         let username = "704"; // XXX testing, get a dedicated ext
         let sipUri = `sip:${futelExtension}@futel-${instance}.phu73l.net;region=us2`;
