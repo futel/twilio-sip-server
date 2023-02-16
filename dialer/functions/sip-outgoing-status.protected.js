@@ -32,7 +32,8 @@ exports.handler = function(context, event, callback) {
          UserEvent: dialEvent}).then(response => {
              snsClient.publish(
                  context,
-                 {Channel: fromNumber,
+                 {endpoint: fromNumber,
+                  Channel: fromNumber,
                   UserEvent: dialStatusEvent}).then(response => {
                       callback(null);
                   });
