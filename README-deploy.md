@@ -96,21 +96,21 @@ Use the SIDs of the domains and credential list found in the previous steps.
 
 ## Set voice authentication credentials for stage and prod SIP domains
 
-Visit the GUI for the dev and prod sip domains and add the same "sip-direct" credential list to "voice authentication", then save.
+Visit the GUI for the stage and prod sip domains and add the same "sip-direct" credential list to "voice authentication", then save.
 
 There doesn't seem to be any other way to do this.
 
 
 # Create a new stage deployment, or update an existing one
 
-To do this, redeploy the dev service. Other components won't change (but see notes above).
+To do this, redeploy the stage service. Other components won't change (but see notes above).
 
     twilio serverless:deploy --environment=stage
 
 
-# Promote the service dev deployment to the production environment
+# Promote the stage deployment to the production environment
 
-    twilio serverless:promote --source-environment=dev --environment=prod
+    twilio serverless:promote --source-environment=stage --environment=prod
 
 # Delete a service
 
