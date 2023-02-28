@@ -130,7 +130,7 @@ This deletes the entire service, not just an environment. To delete an environme
 
 # Add configuration for a new SIP client
 
-We need at least one SIP client, of course. When we add a new one, we create a phone number and a credential in the credential list in Twilio, and we update the extensions asset in the Twilio Service. If there is an unused phone number, credential, and asset item, they can be re-used instead of creating a new one.
+We need at least one SIP client, of course. When we add a new one, we create a Twilo phone number, create a credential in the Twilio credential, and update the extensions asset source in the Twilio Service. If there is an unused phone number, credential, and asset item, they can be re-used instead of creating a new one.
 
 ## Create a phone number
 
