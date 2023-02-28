@@ -1,0 +1,13 @@
+outgoing dialtone:
+after dialing 999 from extension:
+(dial 933 from dialtone to test 911)
+extension # 0 has-911 caller-id
++19713512383 outging-safe yes no test
+
+internal dialtone:
+After navigating to dialtone from outgoing-safe:
+extension has-911 caller-id
++19713512383 no test
+
+incoming:
+Register SIP client to test extension. Call test number from PSTN. Experience call.
