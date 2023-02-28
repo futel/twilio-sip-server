@@ -130,7 +130,7 @@ This deletes the entire service, not just an environment. To delete an environme
 
 # Add configuration for a new SIP client
 
-We need at least one SIP client, of course. When we add a new one, the only existing component which we change is the credential list. We add a phone number and credential.
+We need at least one SIP client, of course. When we add a new one, we create a phone number and a credential in the credential list in Twilio, and we update the extensions asset in the Twilio Service. If there is an unused phone number, credential, and asset item, they can be re-used instead of creating a new one.
 
 ## Create a phone number
 
@@ -159,7 +159,23 @@ Create a new credential in the credential list. Use the SID found in the previou
 
     twilio api:core:sip:credential-lists:credentials:create --credential-list-sid <SID> --username '<USERNAME>' --password <PASSWORD>
 
-## Remove credential
+## Update extensions asset
+
+Add entry in assets/extensions.private.json.
+
+# Delete configuration for a SIP client
+
+Configuration does not need to be deleted, it can just be left for later re-use. If there is a concern about credentials being leaked, the Twilio credential password can be changed.
+
+## Delete phone number
+
+Use the web GUI.
+
+## Update extensions asset
+
+Delete entry in assets/extensions.private.json.
+
+## Delete credential
 
 Use the web gui.
 
