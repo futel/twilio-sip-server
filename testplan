@@ -1,13 +1,19 @@
+outgoing setup:
+Register client as in README-client.md. Registration details will determine whether emergency calls are enabled.
+
 outgoing dialtone:
 after dialing 999 from extension:
-(dial 933 from dialtone to test 911)
-extension # 0 has-911 caller-id
+(dial 933 from dialtone to test emergency calls)
+extension # 0 has-emergency caller-id
 +19713512383 outging-safe yes no test
 
 internal dialtone:
 After navigating to dialtone from outgoing-safe:
-extension has-911 caller-id
+extension has-emergency caller-id
 +19713512383 no test
 
-incoming:
-Register SIP client to test extension. Call test number from PSTN. Experience call.
+incoming setup:
+Register client to test extension as in README-client.md.
+
+incoming call:
+Call test number from PSTN. Experience call.

@@ -62,11 +62,15 @@ List the environemnts to find the environment URL.
 
 The outgoing SIP function URLs are https://<environment URL>/sip-outgoing, e.g. https://dialer-1780-stage.twil.io/sip-outgoing.
 
-## Create new stage and prod SIP domains
+## Create new stage and prod emergency and nonemergency SIP domains
 
     twilio api:core:sip:domains:create --domain-name direct-futel-stage.sip.twilio.com --friendly-name direct-futel-stage --sip-registration --emergency-calling-enabled --voice-method GET --voice-url '<STAGE FUNCTION URL>'
 
+    twilio api:core:sip:domains:create --domain-name direct-futel-nonemergency-stage.sip.twilio.com --friendly-name direct-futel-stage --sip-registration --voice-method GET --voice-url '<STAGE FUNCTION URL>'
+
     twilio api:core:sip:domains:create --domain-name direct-futel-prod.sip.twilio.com --friendly-name direct-futel-prod --sip-registration --emergency-calling-enabled --voice-method GET --voice-url '<PROD FUNCTION URL>'
+
+    twilio api:core:sip:domains:create --domain-name direct-futel-nonemergency-prod.sip.twilio.com --friendly-name direct-futel-prod --sip-registration --voice-method GET --voice-url '<PROD FUNCTION URL>'
 
 Use the SIP function URLs found in the previous step.
 
@@ -86,13 +90,17 @@ If we created a new SIP domain in the last step, the SID was listed there. Other
 
     twilio api:core:sip:credential-lists:list
 
-## Create an auth registrations credential list mapping for stage and prod SIP domains
+## Create an auth registrations credential list mapping for stage and prod emergency and nonemergency SIP domains
 
 Use the SIDs of the domains and credential list found in the previous steps.
 
-    twilio api:core:sip:domains:auth:registrations:credential-list-mappings:create --domain-sid <STAGE DOMAIN SID> --credential-list-sid <CREDENTIAL LIST SID>
+    twilio api:core:sip:domains:auth:registrations:credential-list-mappings:create --domain-sid <STAGE EMERGENCY DOMAIN SID> --credential-list-sid <CREDENTIAL LIST SID>
 
-    twilio api:core:sip:domains:auth:registrations:credential-list-mappings:create --domain-sid <PROD DOMAIN SID> --credential-list-sid <CREDENTIAL LIST SID>
+    twilio api:core:sip:domains:auth:registrations:credential-list-mappings:create --domain-sid <STAGE NONEMERGENCY DOMAIN SID> --credential-list-sid <CREDENTIAL LIST SID>
+
+    twilio api:core:sip:domains:auth:registrations:credential-list-mappings:create --domain-sid <PROD EMERGENCY DOMAIN SID> --credential-list-sid <CREDENTIAL LIST SID>
+
+    twilio api:core:sip:domains:auth:registrations:credential-list-mappings:create --domain-sid <PROD NONEMERGENCY DOMAIN SID> --credential-list-sid <CREDENTIAL LIST SID>
 
 ## Set voice authentication credentials for stage and prod SIP domains
 
