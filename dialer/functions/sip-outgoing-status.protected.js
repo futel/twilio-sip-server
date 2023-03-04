@@ -33,10 +33,17 @@ exports.handler = function(context, event, callback) {
     console.log(`endpoint: ${endpoint}`);
     console.log(`dialEvent ${dialEvent}`);        
     console.log(`dialStatusEvent ${dialStatusEvent}`);
+
+    let twiml = null;
+    if (event.ErrorCode == 32009) {
+        // Your TwiML tried to Dial a Twilio SIP Registered User that is not currently registered
+        twiml = new Twilio.twiml.VoiceResponse();
+        twiml.say("We're sorry, your call cannot be completed as dialed. Please try again later.");
+    }
     
     snsClient.publish(context, {Channel: endpoint, UserEvent: dialEvent})
         .then(response =>
             snsClient.publish(
                 context, {endpoint: endpoint, Channel: endpoint, UserEvent: dialStatusEvent}))
-        .then(response => callback(null));
+        .then(response => callback(null, twiml));
 };
