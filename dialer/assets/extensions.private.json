@@ -2,5 +2,9 @@
     "test": {
         "outgoing": "outgoing_safe",
         "callerId": "+19713512383"
+    },
+    "sjac": {
+        "outgoing": "outgoing_safe",
+        "callerId": "+15032126899"
     }
 }
