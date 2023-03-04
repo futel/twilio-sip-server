@@ -24,6 +24,7 @@ exports.handler = function(context, event, callback) {
     let toNumber = futelUtil.sipToExtension(eventToNumber);
     if (!toNumber) {
         console.log("Could not parse appropriate to number.");
+        twiml.say("We're sorry, your call cannot be completed as dialed. Please check the number and try again.");        
         twiml.reject();
         callback(null, twiml);
         return;
@@ -47,6 +48,7 @@ exports.handler = function(context, event, callback) {
         callback(null, twiml); // Must not do anything after callback!
     } else if (futelUtil.filterOutgoingNumber(toNumber)) {
         console.log("filtered number " + toNumber);
+        twiml.say("We're sorry, your call cannot be completed as dialed. Please check the number and try again.");
         twiml.reject();
         callback(null, twiml); // Must not do anything after callback!
     } else {
