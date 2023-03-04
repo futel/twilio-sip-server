@@ -32,17 +32,11 @@ exports.handler = function(context, event, callback) {
     let dialStatusEvent = dialStatusEventBase + dialCallStatus + '_' + endpoint;
     console.log(`endpoint: ${endpoint}`);
     console.log(`dialEvent ${dialEvent}`);        
-    console.log(`dialStatusEvent ${dialStatusEvent}`);    
-    snsClient.publish(
-        context,
-        {Channel: endpoint,
-         UserEvent: dialEvent}).then(response => {
-             snsClient.publish(
-                 context,
-                 {endpoint: endpoint,
-                  Channel: endpoint,
-                  UserEvent: dialStatusEvent}).then(response => {
-                      callback(null);
-                  });
-         });
+    console.log(`dialStatusEvent ${dialStatusEvent}`);
+    
+    snsClient.publish(context, {Channel: endpoint, UserEvent: dialEvent})
+        .then(response =>
+            snsClient.publish(
+                context, {endpoint: endpoint, Channel: endpoint, UserEvent: dialStatusEvent}))
+        .then(response => callback(null));
 };
