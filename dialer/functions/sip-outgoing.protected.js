@@ -6,17 +6,20 @@ const futelUtilPath = Runtime.getFunctions()['futel-util'].path;
 const futelUtil = require(futelUtilPath);
 
 const extensionMapAsset = Runtime.getAssets()['/extensions.json'];
+const extensionMap = JSON.parse(extensionMapAsset.open());
 
 exports.handler = function(context, event, callback) {
-    const { From: eventFromNumber, To: eventToNumber, SipDomainSid: sipDomainSid } = event;
+    const { From: extensionUri, To: eventToNumber, SipDomainSid: sipDomainSid } = event;
     const client = context.getTwilioClient();    
     let twiml = new Twilio.twiml.VoiceResponse();
     let instance = futelUtil.getEnvironment(context);
     
-    console.log(`Original from number: ${eventFromNumber}`);
+    console.log(`Original from number: ${extensionUri}`);
     console.log(`Original to number: ${eventToNumber}`);
     // The caller ID is the SIP extension we are calling from, which we assume is E.164.
-    let fromNumber = futelUtil.sipToExtension(eventFromNumber);
+    let extension = futelUtil.sipToExtension(extensionUri);
+    console.log(`Extension: ${extension}`);    
+    let fromNumber = extensionMap[extension].callerId;
     console.log(`SIP CallerID: ${fromNumber}`);    
     let toNumber = futelUtil.sipToExtension(eventToNumber);
     if (!toNumber) {
@@ -36,8 +39,7 @@ exports.handler = function(context, event, callback) {
     if (toNumber == "#") {
         // Send caller to the trunk.
         console.log(`trunk to number: ${toNumber}`);
-        let extensionMap = JSON.parse(extensionMapAsset.open());
-        let futelExtension = extensionMap[fromNumber].outgoing;
+        let futelExtension = extensionMap[extension].outgoing;
         let sipUri = `sip:${futelExtension}@futel-${instance}.phu73l.net;region=us2`;
         twiml.dial(
             {answerOnBridge: true, action: '/sip-outgoing-status'}).sip(

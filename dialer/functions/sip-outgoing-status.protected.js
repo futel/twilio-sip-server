@@ -1,39 +1,46 @@
 // Handler for a Dial status callback.
 // Publishes a metric to SNS.
 
+const futelUtilPath = Runtime.getFunctions()['futel-util'].path;
+const futelUtil = require(futelUtilPath);
+
 const snsClientPath = Runtime.getFunctions()['sns-client'].path;
 const snsClient = require(snsClientPath);
 
+const extensionMapAsset = Runtime.getAssets()['/extensions.json'];
+const extensionMap = JSON.parse(extensionMapAsset.open());
+
 exports.handler = function(context, event, callback) {
-    let fromNumber = event.From;
+    let extensionUri = event.From;
+    let toNumber = event.To;
     let dialCallStatus = event.DialCallStatus
     let dialEvent = null;
     let dialStatusEventBase = null;
-    let regExSipUri = /^sip:((\+)?[0-9]+)@(.*)/;
-    console.log(`Original from number: ${fromNumber}`);
-    // The caller ID is the SIP extension we are calling from, which we assume is E.164.
-    if (fromNumber.match(regExSipUri)) {
-        // outgoing from Twilio SIP Domain
-        fromNumber = fromNumber.match(regExSipUri)[1];
-        const dialEvent = "outgoing_call";
-        const dialStatusEventBase = "outgoing_dialstatus_";
+    console.log(`Original from number: ${extensionUri}`);
+    let extension = futelUtil.sipToExtension(extensionUri);
+    if (extension) {
+        // Outgoing from Twilio SIP Domain, extensionUri is SIP URI to extension.
+        endpoint = extension;
+        dialEvent = "outgoing_call";
+        dialStatusEventBase = "outgoing_dialstatus_";
     } else {
-        // incoming from Twilio phone number
-        const dialEvent = "incoming_call";
-        const dialStatusEventBase = "incoming_dialstatus_";        
+        // Incoming to Twilio phone number, extensionUri is E.164 of caller.
+        endpoint = futelUtil.e164ToExtension(toNumber, extensionMap);
+        dialEvent = "incoming_call";
+        dialStatusEventBase = "incoming_dialstatus_";        
     }
-    console.log(`SIP CallerID: ${fromNumber}`);    
-    console.log(`DialCallStatus ${dialCallStatus}`);
-
-    let dialStatusEvent = dialStatusEventBase + dialCallStatus;
+    let dialStatusEvent = dialStatusEventBase + dialCallStatus + '_' + endpoint;
+    console.log(`endpoint: ${endpoint}`);
+    console.log(`dialEvent ${dialEvent}`);        
+    console.log(`dialStatusEvent ${dialStatusEvent}`);    
     snsClient.publish(
         context,
-        {Channel: fromNumber,
+        {Channel: endpoint,
          UserEvent: dialEvent}).then(response => {
              snsClient.publish(
                  context,
-                 {endpoint: fromNumber,
-                  Channel: fromNumber,
+                 {endpoint: endpoint,
+                  Channel: endpoint,
                   UserEvent: dialStatusEvent}).then(response => {
                       callback(null);
                   });

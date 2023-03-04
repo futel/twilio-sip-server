@@ -20,3 +20,22 @@ test('sipToExtension', async (t) => {
         assert.strictEqual(futelUtil.sipToExtension(url), "test");
     });
 });
+
+test('e164ToExtension', async (t) => {
+    const extensionMap = {
+        "foo": {
+            "outgoing": "outgoing_safe",
+            "callerId": "+15035551212"
+        },
+        "test": {
+            "outgoing": "outgoing_safe",
+            "callerId": "+15035551213"
+        }
+    };
+    await t.test('existing', (t) => {
+        assert.strictEqual(futelUtil.e164ToExtension('+15035551212', extensionMap), "foo");
+    });
+    await t.test('nonexisting', (t) => {
+        assert.strictEqual(futelUtil.e164ToExtension('xyzzy', extensionMap), null);
+    });
+});

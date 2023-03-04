@@ -9,6 +9,9 @@ const phoneUtil = require('google-libphonenumber').PhoneNumberUtil.getInstance()
 const futelUtilPath = Runtime.getFunctions()['futel-util'].path;
 const futelUtil = require(futelUtilPath);
 
+const extensionMapAsset = Runtime.getAssets()['/extensions.json'];
+const extensionMap = JSON.parse(extensionMapAsset.open());
+
 const sipDomainSubdomainBase = "direct-futel";
 const sipDomainSuffix = "sip.us1.twilio.com";
 
@@ -28,12 +31,14 @@ exports.handler = function(context, event, callback) {
     console.log(`SIP domain: ${sipDomain}`);    
 
     let toNumber = futelUtil.normalizeNumber(eventToNumber);
-    console.log(`Normlized to number ${toNumber}`);
+    let extension = futelUtil.e164ToExtension(toNumber, extensionMap);
+    console.log(`Normalized to number: ${toNumber}`);
+    console.log(`Extension: ${extension}`);    
 
     twiml.dial(
         {callerId: fromNumber,
          answerOnBridge: true,
          action: '/sip-outgoing-status'}).sip(
-             `sip:${toNumber}@${sipDomain}`);
+             `sip:${extension}@${sipDomain}`);
     callback(null, twiml); // Must not do anything after callback!
-};   
+};

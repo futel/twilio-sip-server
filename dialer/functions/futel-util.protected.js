@@ -110,8 +110,20 @@ function sipToExtension(sipUri) {
     return decodeURIComponent(sipUri.match(regExSipUri)[1]);
 }
 
+// Return an extension for E.164 string.
+function e164ToExtension(e164, extensionMap) {
+    for (key in extensionMap) {
+        if (extensionMap[key].callerId == e164) {
+            return key;
+        }
+    }
+    console.log("Could not find extension for E.164 number");
+    return null;
+}
+
 exports.getEnvironment = getEnvironment;
 exports.filterOutgoingNumber = filterOutgoingNumber;
 exports.transformNumber = transformNumber;
 exports.normalizeNumber = normalizeNumber;
 exports.sipToExtension = sipToExtension;
+exports.e164ToExtension = e164ToExtension;
