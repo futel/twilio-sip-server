@@ -66,11 +66,11 @@ The outgoing SIP function URLs are https://<environment URL>/sip-outgoing, e.g. 
 
     twilio api:core:sip:domains:create --domain-name direct-futel-stage.sip.twilio.com --friendly-name direct-futel-stage --sip-registration --emergency-calling-enabled --voice-method GET --voice-url '<STAGE FUNCTION URL>'
 
-    twilio api:core:sip:domains:create --domain-name direct-futel-nonemergency-stage.sip.twilio.com --friendly-name direct-futel-stage --sip-registration --voice-method GET --voice-url '<STAGE FUNCTION URL>'
+    twilio api:core:sip:domains:create --domain-name direct-futel-nonemergency-stage.sip.twilio.com --friendly-name direct-futel-nonemergency-stage --sip-registration --voice-method GET --voice-url '<STAGE FUNCTION URL>'
 
     twilio api:core:sip:domains:create --domain-name direct-futel-prod.sip.twilio.com --friendly-name direct-futel-prod --sip-registration --emergency-calling-enabled --voice-method GET --voice-url '<PROD FUNCTION URL>'
 
-    twilio api:core:sip:domains:create --domain-name direct-futel-nonemergency-prod.sip.twilio.com --friendly-name direct-futel-prod --sip-registration --voice-method GET --voice-url '<PROD FUNCTION URL>'
+    twilio api:core:sip:domains:create --domain-name direct-futel-nonemergency-prod.sip.twilio.com --friendly-name direct-futel-nonemergency-prod --sip-registration --voice-method GET --voice-url '<PROD FUNCTION URL>'
 
 Use the SIP function URLs found in the previous step.
 
@@ -157,13 +157,11 @@ Create new phone number
 
 ## Create credential
 
-The username is the E.164 phone numbers of the SIP client.
-
 List the credential lists to get the SID.
 
     twilio api:core:sip:credential-lists:list
 
-Create a new credential in the credential list. Use the SID found in the previous step. For the username, use the E.164 phone number created earlier.
+Create a new credential in the credential list. Use the SID found in the previous step.
 
     twilio api:core:sip:credential-lists:credentials:create --credential-list-sid <SID> --username '<USERNAME>' --password <PASSWORD>
 
