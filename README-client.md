@@ -8,9 +8,9 @@
   - <sip:direct-futel-nonemergency-prod.sip.twilio.com;transport=tls>  
 - password: (Twilio credentential list password)
 - Dial plan if emergency calls are enabled:
-  - (911|933|1[2-9]xxxxxxxxx|0111[2-9]xxxxxxxxx|[2-9]xxxxxxxxx)
+  - (911|933|1[2-9]xxxxxxxxx|0111[2-9]xxxxxxxxx|[2-9]xxxxxxxxx|#)
 - Dial plan if emergency calls are not enabled:
-  - (1[2-9]xxxxxxxxx|0111[2-9]xxxxxxxxx|[2-9]xxxxxxxxx)
+  - (1[2-9]xxxxxxxxx|0111[2-9]xxxxxxxxx|[2-9]xxxxxxxxx|#)
 
 For stage, the server address is one of
   - direct-futel-stage.sip.twilio.com
@@ -24,3 +24,4 @@ For stage, the server address is one of
     1 followed by 2-9 followed by 9 digits (E.164 with US country code)
     2-9 followed by 9 digits (NANPA ie US E.164 without country code)
     0111 followed by 2-9 followed by 9 digits (NANPA international ie 01 then E.164 with US country code)
+    #
