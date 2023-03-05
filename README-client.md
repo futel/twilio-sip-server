@@ -1,12 +1,19 @@
 # Set up Linksys PAP ATA device for prod
 
+- nat mapping enable: no
 - nat keep alive: enable
-- sip address: (E.164 number)@direct-futel-prod.sip.twilio.com
-- sip server address if emergency calls are enabled:
-  - <sip:direct-futel-prod.sip.twilio.com;transport=tls>
-- sip server address if emergency calls are not enabled:  
-  - <sip:direct-futel-nonemergency-prod.sip.twilio.com;transport=tls>  
-- password: (Twilio credentential list password)
+- proxy if emergency calls are enabled:
+  - direct-futel-prod.sip.twilio.com
+- proxy if emergency calls are not enabled:  
+  - direct-futel-nonemergency-prod.sip.twilio.com
+- use outbound proxy: no
+- register: yes
+- make call without reg: yes
+- ans call without reg: yes
+- display name: <extension>
+- user ID: <extension>
+- password: (Twilio credential list password)
+- call waiting serv: no
 - Dial plan if emergency calls are enabled:
   - (911|933|1[2-9]xxxxxxxxx|0111[2-9]xxxxxxxxx|[2-9]xxxxxxxxx|#)
 - Dial plan if emergency calls are not enabled:
