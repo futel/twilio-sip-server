@@ -35,7 +35,7 @@ exports.handler = function(context, event, callback) {
     console.log(`dialStatusEvent ${dialStatusEvent}`);
 
     let twiml = null;
-    if (event.ErrorCode == 32009) {
+    if (dialCallStatus == "failed") {
         // Your TwiML tried to Dial a Twilio SIP Registered User that is not currently registered
         twiml = new Twilio.twiml.VoiceResponse();
         twiml.say("We're sorry, your call cannot be completed as dialed. Please try again later.");
