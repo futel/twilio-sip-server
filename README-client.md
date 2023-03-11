@@ -32,3 +32,5 @@ For stage, the server address is one of
     2-9 followed by 9 digits (NANPA ie US E.164 without country code)
     0111 followed by 2-9 followed by 9 digits (NANPA international ie 01 then E.164 with US country code)
     #
+
+Note that "[2-9]xxxxxxxxx" is allowing shorter sequences including 911 - the sequece length is apparently not enforced and a subsequence is accepted.
