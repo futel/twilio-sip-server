@@ -37,10 +37,15 @@ exports.handler = function(context, event, callback) {
     }
     console.log(`Normalized to number: ${toNumber}`);
 
-    if (toNumber == "#") {
+    if (["#", "0"].includes(toNumber)) {
         // Send caller to the trunk.
-        console.log(`trunk to number: ${toNumber}`);
-        let futelExtension = extensionMap[extension].outgoing;
+        let futelExtension = null;
+        if (toNumber == "#") {
+            futelExtension = extensionMap[extension].outgoing;
+        } else if (toNumber == "0") {
+            futelExtension = "operator";
+        }
+        console.log(`trunk extension: ${futelExtension}`);
         let sipUri = `sip:${futelExtension}@futel-${instance}.phu73l.net;region=us2`;
         twiml.dial(
             {answerOnBridge: true, action: '/sip-outgoing-status'}).sip(
