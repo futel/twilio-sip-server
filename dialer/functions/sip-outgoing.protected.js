@@ -45,12 +45,12 @@ exports.handler = function(context, event, callback) {
         twiml.dial(
             {answerOnBridge: true, action: '/sip-outgoing-status'}).sip(
                 sipUri);
-        callback(null, twiml); // Must not do anything after callback!
+        callback(null, twiml);
     } else if (futelUtil.filterOutgoingNumber(toNumber)) {
         console.log("filtered number " + toNumber);
         twiml.say("We're sorry, your call cannot be completed as dialed. Please check the number and try again.");
         twiml.reject();
-        callback(null, twiml); // Must not do anything after callback!
+        callback(null, twiml);
     } else {
         toNumber = futelUtil.transformNumber(toNumber);
         console.log(`Transformed to number: ${toNumber}`);
@@ -60,6 +60,6 @@ exports.handler = function(context, event, callback) {
              answerOnBridge: true,
              action: '/sip-outgoing-status'},
             toNumber);
-        callback(null, twiml); // Must not do anything after callback!
+        callback(null, twiml);
     }
 };
