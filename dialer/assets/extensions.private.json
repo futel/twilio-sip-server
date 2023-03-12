@@ -1,4 +1,19 @@
 {
+    "maple-basement": {
+        "outgoing": "outgoing_safe",
+        "callerId": "+15034681337",
+        "enableEmergency": false
+    },
+    "maple-office": {
+        "outgoing": "outgoing_safe",
+        "callerId": "+15034681337",
+        "enableEmergency": false
+    },
+    "maple-booth": {
+        "outgoing": "outgoing_safe",
+        "callerId": "+15034681337",
+        "enableEmergency": false
+    },
     "r2d2": {
         "outgoing": "outgoing_safe",
         "callerId": "+15033828838",
