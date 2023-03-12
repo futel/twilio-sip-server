@@ -163,7 +163,7 @@ List the credential lists to get the SID.
 
 Create a new credential in the credential list. Use the SID found in the previous step.
 
-    twilio api:core:sip:credential-lists:credentials:create --credential-list-sid <SID> --username '<USERNAME>' --password <PASSWORD>
+    twilio api:core:sip:credential-lists:credentials:create --credential-list-sid <SID> --username '<USERNAME>' --password '<PASSWORD>'
 
 ## Update extensions asset
 
