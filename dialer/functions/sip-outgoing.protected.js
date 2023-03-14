@@ -46,7 +46,7 @@ exports.handler = function(context, event, callback) {
             futelExtension = "operator";
         }
         console.log(`trunk extension: ${futelExtension}`);
-        let sipUri = `sip:${futelExtension}@futel-${instance}.phu73l.net;region=us2`;
+        let sipUri = `sip:${futelExtension}@futel-${instance}.phu73l.net;region=us2?x-callerid=${fromNumber}`;
         twiml.dial(
             {answerOnBridge: true, action: '/sip-outgoing-status'}).sip(
                 sipUri);
