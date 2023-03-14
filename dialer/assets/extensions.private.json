@@ -27,6 +27,6 @@
     "test": {
         "outgoing": "outgoing_safe",
         "callerId": "+19713512383",
-        "enableEmergency": true
+        "enableEmergency": false
     }
 }
