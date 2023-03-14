@@ -18,9 +18,12 @@ exports.handler = function(context, event, callback) {
     console.log(`Original to number: ${eventToNumber}`);
     // The caller ID is the SIP extension we are calling from, which we assume is E.164.
     let extension = futelUtil.sipToExtension(extensionUri);
-    console.log(`Extension: ${extension}`);    
     let fromNumber = extensionMap[extension].callerId;
-    console.log(`SIP CallerID: ${fromNumber}`);    
+    let enableEmergency = extensionMap[extension].enableEmergency;
+    console.log(`Extension: ${extension}`);    
+    console.log(`SIP CallerID: ${fromNumber}`);
+    console.log(`enableEmergency: ${enableEmergency}`);    
+    
     let toNumber = futelUtil.sipToExtension(eventToNumber);
     if (!toNumber) {
         console.log("Could not parse appropriate to number.");
@@ -46,7 +49,7 @@ exports.handler = function(context, event, callback) {
             futelExtension = "operator";
         }
         console.log(`trunk extension: ${futelExtension}`);
-        let sipUri = `sip:${futelExtension}@futel-${instance}.phu73l.net;region=us2?x-callerid=${fromNumber}`;
+        let sipUri = `sip:${futelExtension}@futel-${instance}.phu73l.net;region=us2?x-callerid=${fromNumber}&x-enableemergency=${enableEmergency}`;
         twiml.dial(
             {answerOnBridge: true, action: '/sip-outgoing-status'}).sip(
                 sipUri);
