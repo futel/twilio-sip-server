@@ -1,19 +1,24 @@
 outgoing setup:
 Register client as in README-client.md. Registration details will determine whether emergency calls are enabled.
 
-outgoing dialtone:
-after dialing 999 from extension:
-(dial 933 from dialtone to test emergency calls)
-extension # 0 has-emergency caller-id
-+19713512383 outging-safe yes no test
-
-internal dialtone:
-After navigating to dialtone from outgoing-safe:
-extension has-emergency caller-id
-+19713512383 no test
-
 incoming setup:
 Register client to test extension as in README-client.md.
+
+outgoing dialtone:
+after dialing 999 from extension:
+# sends to appropriate context
+0 sends to operator from dialtone and asterisk
+emergency call acts appropriately from dialtone and asterisk
+caller ID is appropriate from dialtone and asterisk
+(dial 933 to test emergency calls)
+(dial 1 from asterisk prompt to test asterisk calls)
+extension # 0 has-emergency caller-id
+maple-basement outging_safe yes no incoming_leet
+maple-booth outgoing_safe yes no incoming_leet
+maple-office outging_safe yes no incoming_leet
+r2d2 outging_safe yes yes r2d2
+sjac outging_safe yes no sjac
+test outging_safe yes yes test
 
 incoming call:
 Call test number from PSTN. Experience call.
