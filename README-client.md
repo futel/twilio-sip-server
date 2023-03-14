@@ -15,9 +15,9 @@
 - password: (Twilio credential list password)
 - call waiting serv: no
 - Dial plan if emergency calls are enabled:
-  - (911|933|1[2-9]xxxxxxxxx|0111[2-9]xxxxxxxxx|[2-9]xxxxxxxxx|#|0)
+  - (911|933|1[2-9]xxxxxxxxx|0111[2-9]xxxxxxxxx|[2-9]xxxxxxxxx|*|#|0)
 - Dial plan if emergency calls are not enabled:
-  - (1[2-9]xxxxxxxxx|0111[2-9]xxxxxxxxx|[2-9]xxxxxxxxx|#|0)
+  - (1[2-9]xxxxxxxxx|0111[2-9]xxxxxxxxx|[2-9]xxxxxxxxx|*|#|0)
 
 For stage, the server address is one of
   - direct-futel-stage.sip.twilio.com
