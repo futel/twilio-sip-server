@@ -1,4 +1,9 @@
 {
+    "demo": {
+        "outgoing": "outgoing_safe",
+        "callerId": "+15034681337",
+        "enableEmergency": false
+    },
     "maple-basement": {
         "outgoing": "outgoing_safe",
         "callerId": "+15034681337",
