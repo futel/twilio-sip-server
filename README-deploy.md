@@ -171,7 +171,7 @@ Add entry in assets/extensions.private.json.
 
 # Delete configuration for a SIP client
 
-Configuration does not need to be deleted, it can just be left for later re-use. If there is a concern about credentials being leaked, the Twilio credential password can be changed.
+Delete the phone number, delete the credential from the credential list, dlete the entry in extensions.private.json.
 
 ## Delete phone number
 
@@ -191,3 +191,6 @@ todo:
   - use the cli to remove a credential
   - use the cli to CRUD a phone number
   - use the cli to update a SIP Domain
+  - needs a maintenance/verification process
+    - sip-direct credential list is associated with the expected sip domains
+    - extensions.private.json credentials are associated with the sip-direct credential list
