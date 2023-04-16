@@ -1,11 +1,16 @@
-# Set up Linksys PAP ATA device for prod
+Have server, extension, Twilio extension list password
+
+Server is one of
+- direct-futel-prod.sip.twilio.com
+- direct-futel-nonemergency-prod.sip.twilio.com
+- direct-futel-stage.sip.twilio.com
+- direct-futel-nonemergency-stage.sip.twilio.com
+
+# Set up Linksys PAP ATA device
 
 - nat mapping enable: no
 - nat keep alive: enable
-- proxy if emergency calls are enabled:
-  - direct-futel-prod.sip.twilio.com
-- proxy if emergency calls are not enabled:  
-  - direct-futel-nonemergency-prod.sip.twilio.com
+- proxy: <server>
 - use outbound proxy: no
 - register: yes
 - make call without reg: yes
@@ -19,9 +24,32 @@
 - Dial plan if emergency calls are not enabled:
   - (1[2-9]xxxxxxxxx|0111[2-9]xxxxxxxxx|[2-9]xxxxxxxxx|*|#|0)
 
-For stage, the server address is one of
-  - direct-futel-stage.sip.twilio.com
-  - direct-futel-nonemergency-stage.sip.twilio.com
+# Set up Grandstream HT701
+
+basic settings
+telnet server: no
+
+advanced settings
+admin password:
+firmware server path: blank
+config server path: blank
+automatic upgrade: no
+always skip the firmware check: selected
+
+fxs port
+account active: yes
+primary sip server: <server>
+nat traversal: no
+sip user id: <extension>
+authenticate id: <extension>
+authenticate password: (Twilio credential list password)
+sip registration: yes
+unregister on reboot: no
+outgoing call without registration: yes
+Disable Call-Waiting: yes
+Disable Call-Waiting Caller ID: yes
+Disable Call-Waiting Tone: yes
+Offhook Auto-Dial:
 
 # Dial plan notes
 
