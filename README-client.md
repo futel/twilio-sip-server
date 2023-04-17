@@ -50,6 +50,9 @@ Disable Call-Waiting: yes
 Disable Call-Waiting Caller ID: yes
 Disable Call-Waiting Tone: yes
 Offhook Auto-Dial:
+Offhook Auto-Dial Delay: 0
+Hook Flash Timing: minimum: 500 maximum: 500
+
 
 # Dial plan notes
 
