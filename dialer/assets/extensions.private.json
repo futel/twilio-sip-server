@@ -9,12 +9,17 @@
         "callerId": "+15034681337",
         "enableEmergency": false
     },
-    "dome-office": {
+    "dome-booth": {
         "outgoing": "outgoing_safe",
         "callerId": "+15034681337",
         "enableEmergency": false
     },
-    "dome-booth": {
+    "dome-garage": {
+        "outgoing": "outgoing",
+        "callerId": "+15034681337",
+        "enableEmergency": false
+    },
+    "dome-office": {
         "outgoing": "outgoing_safe",
         "callerId": "+15034681337",
         "enableEmergency": false
