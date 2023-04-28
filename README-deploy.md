@@ -17,7 +17,7 @@ The initial deploy process is to create the stage components and at least one SI
 
 When we develop, we will redeploy the stage service with the serverless toolkit. When ready, the stage service is again promoted to prod. We shouldn't have to redeploy or change any other components, but nothing gets promoted except the service. If we change anything other than the service, we will presumably be changing the stage components, then changing the prod components to match stage when we promote the stage service to prod.
 
-The stage and prod deployments communicate with the corresponding deploymnets on the Asterisk side. We develop on stage, it would be more correct to have a separate dev deployment.
+The stage and prod deployments communicate with the corresponding deployments on the Asterisk side. We develop on stage, it would be more correct to have a separate dev deployment.
 
 For most of the Twilio API calls, a 400 response because the resource already exists is OK.
 
@@ -56,7 +56,7 @@ Note that if we are creating a service (instead of updating an existing one), SI
 
 ## Get the outgoing SIP function URLs
 
-List the environemnts to find the environment URL.
+List the environments to find the environment URL.
 
     twilio serverless:list environments
 
