@@ -24,6 +24,11 @@
         "callerId": "+15034681337",
         "enableEmergency": false
     },
+    "ghost-mountain": {
+        "outgoing": "outgoing",
+        "callerId": "+15034448615",
+        "enableEmergency": false
+    },
     "r2d2": {
         "outgoing": "outgoing_safe",
         "callerId": "+15033828838",
