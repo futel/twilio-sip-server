@@ -62,12 +62,18 @@ exports.handler = function(context, event, callback) {
     } else {
         toNumber = futelUtil.transformNumber(toNumber);
         console.log(`Transformed to number: ${toNumber}`);
-        // XXX default timeLimit is 4 hours, should be smaller, in seconds
-        twiml.dial(
-            {callerId: fromNumber,
-             answerOnBridge: true,
-             action: '/sip-outgoing-status'},
-            toNumber);
+        // // XXX default timeLimit is 4 hours, should be smaller, in seconds
+        // twiml.dial(
+        //     {callerId: fromNumber,
+        //      answerOnBridge: true,
+        //      action: '/sip-outgoing-status'},
+        //     toNumber);
+
+        url = new URL(futelUtil.getDoFunctionUrl("dialer", context));
+        url.searchParams.append("number", toNumber);
+        url.searchParams.append("caller_id", fromNumber);
+        //url.searchParams.append("action", "XXX");        
+        twiml.redirect(url.href);
         callback(null, twiml);
     }
 };

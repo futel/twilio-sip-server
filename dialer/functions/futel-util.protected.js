@@ -45,6 +45,11 @@ function getEnvironment(context) {
     return environment;
 }
 
+// Return a URL for the DigitalOcean function for name.
+function getDoFunctionUrl(name, context) {
+    return "https://" + context.DO_HOST + "/api/v1/web/" + context.DO_NAMESPACE + "/dialplans/" + name
+}
+
 // Return true if call to E.164 number should be denied.
 function filterOutgoingNumber(number) {
     // Allow 911, 211, etc.
@@ -121,6 +126,7 @@ function e164ToExtension(e164, extensionMap) {
     return null;
 }
 
+exports.getDoFunctionUrl = getDoFunctionUrl;
 exports.getEnvironment = getEnvironment;
 exports.filterOutgoingNumber = filterOutgoingNumber;
 exports.transformNumber = transformNumber;
