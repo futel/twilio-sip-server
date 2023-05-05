@@ -168,7 +168,7 @@ Create a new credential in the credential list. Use the SID found in the previou
 
 ## Update extensions asset
 
-Add entry in assets/extensions.private.json.
+Add entry in assets/extensions.private.json. Deploy/promote.
 
 # Delete configuration for a SIP client
 
