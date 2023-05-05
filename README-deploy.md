@@ -138,7 +138,7 @@ This deletes the entire service, not just an environment. To delete an environme
 
 # Add configuration for a new SIP client
 
-We need at least one SIP client, of course. When we add a new one, we create a Twilo phone number, create a credential in the Twilio credential, and update the extensions asset source in the Twilio Service. If there is an unused phone number, credential, and asset item, they can be re-used instead of creating a new one.
+To add a new SIP client, we create a Twilo phone number, create a credential in the Twilio credential list, and update the extensions asset source in the Twilio Service. If there is an unused phone number, credential, and asset item, they can be re-used instead of creating a new one.
 
 ## Create a phone number
 
@@ -147,17 +147,20 @@ Use the web GUI; the APIs may allow us to do this, but maybe not.
 Create new phone number
 - friendly name: (client)
 - emergency calling: (client address)
-- voice and fax:
+- voice configuration:
     - accept incoming: voice calls
     - configure with: Webhook, TwiML Bin, Function, Studio Flow, Proxy Service
     - a call comes in: Function
     - service: dialer
     - environment: prod-environment (or stage-environment)
     - function path: /sip-incoming
+- messaging configuation:
+    - a message comes in: webhook
+    - URL: blank
 
 ## Create credential
 
-List the credential lists to get the SID.
+List the credential lists to get the SID of "sip-direct".
 
     twilio api:core:sip:credential-lists:list
 
@@ -171,7 +174,7 @@ Add entry in assets/extensions.private.json.
 
 # Delete configuration for a SIP client
 
-Delete the phone number, delete the credential from the credential list, dlete the entry in extensions.private.json.
+Delete the phone number, delete the credential from the credential list, delete the entry in extensions.private.json.
 
 ## Delete phone number
 

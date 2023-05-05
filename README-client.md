@@ -19,10 +19,12 @@ Server is one of
 - user ID: <extension>
 - password: (Twilio credential list password)
 - call waiting serv: no
-- Dial plan if emergency calls are enabled:
+- Dial plan for dialtone if emergency calls are enabled:
   - (911|933|1[2-9]xxxxxxxxx|0111[2-9]xxxxxxxxx|[2-9]xxxxxxxxx|*|#|0)
-- Dial plan if emergency calls are not enabled:
+- Dial plan for dialtone if emergency calls are not enabled:
   - (1[2-9]xxxxxxxxx|0111[2-9]xxxxxxxxx|[2-9]xxxxxxxxx|*|#|0)
+- Dial Plan for menu:
+  S0<:#>
 
 # Set up Grandstream HT701
 
