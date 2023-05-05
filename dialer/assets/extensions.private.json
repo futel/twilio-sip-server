@@ -15,7 +15,7 @@
         "enableEmergency": false
     },
     "dome-garage": {
-        "outgoing": "outgoing",
+        "outgoing": "outgoing_portland",
         "callerId": "+15034681337",
         "enableEmergency": false
     },
@@ -25,7 +25,7 @@
         "enableEmergency": false
     },
     "ghost-mountain": {
-        "outgoing": "outgoing",
+        "outgoing": "outgoing_portland",
         "callerId": "+15034448615",
         "enableEmergency": false
     },
