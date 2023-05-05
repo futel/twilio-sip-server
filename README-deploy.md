@@ -25,22 +25,22 @@ For most of the Twilio API calls, a 400 response because the resource already ex
 
 # Set up stage and prod server components
 
-This process should only need to be done once. After this is done, the expected process is:
+This setup process should only need to be done once. After this is done, the expected process is:
 
-- Update the Twilio service, deploy to stage, then promote to prod
+- Update th service by creating a release branch, deploying to stage, then promoting to prod
 - Add a new SIP client by creating a phone number and credential, and updating the credential list
 
 Those processes are outlined in later sections.
 
-If changes are made to other components, some of the processes here will be repeated.
+If changes are made to other components, some of the processes here will be repeated. But note that the elements of this setup process do not have releases, we don't track changes.
 
 ## Set up environment secrets
 
 Fill .env to match .env.sample as described in README-aws.
 
-## Deploy the service to the stage and prod environments
+## Deploy the service to the initial stage and prod environments
 
-We need to deploy to either environment if they don't exist yet. If we are starting out, we need to create stage and prod. Normally, both environments will always exist from then on, but if for some reason we have destroyed either, we will need to recreate them. It is not an error to deploy to an existing enviroment, this is how we update stage during development, but we normally don't want to update prod except by promoting stage.
+We need to deploy to either environment if they don't exist yet. If we are starting out, we need to create stage and prod. Normally, both environments will always exist from then on, but if for some reason we have destroyed either, we will need to recreate them. It is not an error to deploy to an existing enviroment, this is how we update stage during development, but we normally don't want to deploy to prod, we only want to promote stage to prod.
 
 All serverless toolkit commands are executed in the dialer directory. Api commands can be executed in any directory.
 
@@ -108,31 +108,29 @@ Visit the GUI for the stage and prod sip domains and add the same "sip-direct" c
 
 There doesn't seem to be any other way to do this.
 
+---
 
 # Create a new stage deployment, or update an existing one
 
-To do this, redeploy the stage service. Other components won't change (but see notes above).
+Create or check out release branch.
+
+Redeploy the stage service. Other components won't change (but see notes above).
 
     twilio serverless:deploy --environment=stage
-
 
 # Promote the stage deployment to the production environment
 
     twilio serverless:promote --source-environment=stage --environment=prod
 
+---
+
 # Delete a service
 
-List services to find the sid, then delete it.
-
-    twilio serverless list
-    twilio api:serverless:v1:services:remove --sid <SID>
-
-Then delete .twiliodeployinfo.
-
-This deletes the entire service, not just an environment. To delete an environment:
+To delete an environment, eg stage or dev:
 
     twilio api:serverless:v1:services:environments:remove --service-sid <SID> --sid <SID>
 
+Don't delete prod!
 
 ---
 
