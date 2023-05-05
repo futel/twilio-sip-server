@@ -38,7 +38,11 @@ exports.handler = function(context, event, callback) {
     if (dialCallStatus == "failed") {
         twiml.say("We're sorry, your call cannot be completed as dialed. Please try again later.");
     } else {
-        twiml.say("The call has been completed. Repeat, the call has been completed");
+        // If the first interation on handset pickup is a local menu, we want to return to that.
+        // If the first interation is a SIP call to a remote menu, we want to SIP it again if that
+        // call hung up due to a user hitting the back key from the top, otherwise we want to end.
+        // If the first interation is a dialtone, we want to end.
+        // twiml.say("The call has been completed. Repeat, the call has been completed");
     }
     
     snsClient.publish(context, {Channel: endpoint, UserEvent: dialEvent})
