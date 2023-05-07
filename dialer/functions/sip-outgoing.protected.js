@@ -32,40 +32,42 @@ exports.handler = function(context, event, callback) {
         callback(null, twiml);
         return;
     }
+    
     try {
         toNumber = futelUtil.normalizeNumber(toNumber);
     } catch (error) {
-        // If we couldn't do a normalization step, hopefully we don't care
-        // about any of the others.
+        // XXX When does the normalizer break? If we couldn't do one normalization step,
+        // hopefully we don't care about missing the others.
     }
     console.log(`Normalized to number: ${toNumber}`);
-
-    if (["#", "0"].includes(toNumber)) {
-        // Send caller to the trunk.
-        let futelExtension = null;
-        if (toNumber == "#") {
-            futelExtension = extensionMap[extension].outgoing;
-        } else if (toNumber == "0") {
-            futelExtension = "operator";
-        }
-        console.log(`trunk extension: ${futelExtension}`);
-        let sipUri = `sip:${futelExtension}@futel-${instance}.phu73l.net;region=us2?x-callerid=${fromNumber}&x-enableemergency=${enableEmergency}`;
-        twiml.dial(
-            {answerOnBridge: true, action: '/sip-outgoing-status'}).sip(
-                sipUri);
-        callback(null, twiml);
-    } else if (futelUtil.filterOutgoingNumber(toNumber)) {
+    toNumber = futelUtil.transformNumber(toNumber);
+    console.log(`Transformed to number: ${toNumber}`);
+    if (futelUtil.filterOutgoingNumber(toNumber)) {
         console.log("filtered number " + toNumber);
         twiml.say("We're sorry, your call cannot be completed as dialed. Please check the number and try again.");
         twiml.reject();
         callback(null, twiml);
     } else {
-        toNumber = futelUtil.transformNumber(toNumber);
-        console.log(`Transformed to number: ${toNumber}`);
-        url = new URL(futelUtil.getDoFunctionUrl("dialer", context));
-        url.searchParams.append("number", toNumber);
-        url.searchParams.append("caller_id", fromNumber);
-        twiml.redirect(url.href);
-        callback(null, twiml);
+        if (["#", "0"].includes(toNumber)) {
+            // Send caller to the trunk.
+            let futelExtension = null;
+            if (toNumber == "#") {
+                futelExtension = extensionMap[extension].outgoing;
+            } else if (toNumber == "0") {
+                futelExtension = "operator";
+            }
+            console.log(`trunk extension: ${futelExtension}`);
+            let sipUri = `sip:${futelExtension}@futel-${instance}.phu73l.net;region=us2?x-callerid=${fromNumber}&x-enableemergency=${enableEmergency}`;
+            twiml.dial(
+                {answerOnBridge: true, action: '/sip-outgoing-status'}).sip(
+                    sipUri);
+            callback(null, twiml);
+        } else {
+            url = new URL(futelUtil.getDoFunctionUrl("dial_pstn", context));
+            url.searchParams.append("to_number", toNumber);
+            url.searchParams.append("caller_id", fromNumber);
+            twiml.redirect(url.href);
+            callback(null, twiml);
+        }
     }
 };
