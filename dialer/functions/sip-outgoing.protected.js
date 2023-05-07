@@ -65,7 +65,7 @@ exports.handler = function(context, event, callback) {
         } else {
             url = new URL(futelUtil.getDoFunctionUrl("dial_pstn", context));
             url.searchParams.append("to_number", toNumber);
-            url.searchParams.append("caller_id", fromNumber);
+            url.searchParams.append("from_uri", extensionUri);
             twiml.redirect(url.href);
             callback(null, twiml);
         }
