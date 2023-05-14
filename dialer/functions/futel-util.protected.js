@@ -4,16 +4,5 @@ function getDoFunctionUrl(name, context) {
     return "https://" + context.DO_HOST + "/api/v1/web/" + context.DO_NAMESPACE + "/dialplans/" + name
 }
 
-// Return an extension extracted from sipUri, or null.
-function sipToExtension(sipUri) {
-    const regExSipUri = /^sip:((\+)?.*)@(.*)/;
-    if (!sipUri.match(regExSipUri)) {
-        console.log("Could not parse appropriate extension from SIP URI.");
-        return null;
-    }
-    return decodeURIComponent(sipUri.match(regExSipUri)[1]);
-}
-
 exports.getDoFunctionUrl = getDoFunctionUrl;
-exports.sipToExtension = sipToExtension;
 

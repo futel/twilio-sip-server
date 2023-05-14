@@ -9,24 +9,13 @@ exports.handler = function(context, event, callback) {
     const { From: extensionUri, To: eventToNumber, SipDomainSid: sipDomainSid } = event;
     let twiml = new Twilio.twiml.VoiceResponse();
     
-    console.log(`Original from number: ${extensionUri}`);
-    console.log(`Original to number: ${eventToNumber}`);
-    
-    let toNumber = futelUtil.sipToExtension(eventToNumber);
-    
-    console.log(`Normalized to number: ${toNumber}`);
-    
     if (["#", "0"].includes(toNumber)) {
         url = new URL(futelUtil.getDoFunctionUrl("dial_sip", context));
-        url.searchParams.append("to_extension", toNumber);
-        url.searchParams.append("from_uri", extensionUri);
-        twiml.redirect(url.href);
-        callback(null, twiml);
     } else {
         url = new URL(futelUtil.getDoFunctionUrl("dial_pstn", context));
-        url.searchParams.append("to_uri", eventToNumber);
-        url.searchParams.append("from_uri", extensionUri);
-        twiml.redirect(url.href);
-        callback(null, twiml);
     }
+    url.searchParams.append("to_uri", eventToNumber);
+    url.searchParams.append("from_uri", extensionUri);
+    twiml.redirect(url.href);
+    callback(null, twiml);
 };
