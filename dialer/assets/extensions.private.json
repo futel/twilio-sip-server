@@ -27,7 +27,7 @@
     "ghost-mountain": {
         "outgoing": "outgoing_portland",
         "callerId": "+15034448615",
-        "enableEmergency": false
+        "enableEmergency": true
     },
     "r2d2": {
         "outgoing": "outgoing_safe",
