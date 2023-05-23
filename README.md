@@ -1,10 +1,9 @@
 # Setup for a Twilio SIP extension going directly to dialtone
-
+XXX or sip server
 
 # Objectives
 
-Allow SIP clients to register to Twilio SIP Domains and make outgoing and incoming calls without our VOIP server or VPN. Incoming calls from a Twilio phone number ring the client. Outgoing calls go to PSTN, or get forwarded to our SIP server.
-
+Allow SIP clients to register to Twilio SIP Domains and make outgoing and incoming calls. Incoming calls from a Twilio phone number ring the client. Outgoing calls go to PSTN, get forwarded to our SIP server, or get TwiML.
 
 # Overview
 
@@ -12,10 +11,10 @@ Allow SIP clients to register to Twilio SIP Domains and make outgoing and incomi
 - Outgoing from SIP client => Twilio service => PSTN
 
 Twilio services used:
-- Voice Sip Domains
+- Voice SIP Domains
 - Phone Numbers
-- Service
 - Voice Credential Lists
+- TwiML Apps
 
 We are assuming the default outgoing voice geographic permissions are good. Currently these are US/Canada, Puerto Rico, Mexico, Dominican Republic. There are more NANPA destinations but most of those are expensive.
 
@@ -38,10 +37,5 @@ See README-deploy, README-client.
 
 # Notes
 
-advantages
-- general serverless advantages
-- separate dialtone only clients from asterisk
-
-drawbacks
 - can't log client de/registration?
-- short delay before outgoing ring
+- first leg to Twilio rings, then we get the initial destination
