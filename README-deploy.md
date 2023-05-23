@@ -13,9 +13,9 @@ The Digital Ocean Functions in the dialplan-functions project must be set up.
 
 We will set up Twilio Programmable Voice components for the stage and prod servers. The stage and prod components are identical except for which DigitalOcean Function URLs they reference. 
 
-The initial deploy process is to create the stage components and at least one SIP credential and phone number, then promote the stage service to prod. We add more SIP credentials and phone numbers as clients are added.
+The initial deploy process is to create the stage components and at least one SIP credential and phone number, then point the relevant components to the DigitalOceans Functions prod instance. We add more SIP credentials and phone numbers as clients are added.
 
-The stage and prod installations communicate with the corresponding Asterisk and DigitalOcean Functions installations. We update stage or prod by updating the DigitalOcean Function URLs they point to. The Asterisk installations update their hostnames as they are created and promoted, so Twilio does not need to track that change.
+The stage and prod installations communicate with the corresponding Asterisk and DigitalOcean Functions instances. We update stage or prod by updating the DigitalOcean Function URLs they point to. The Asterisk installations update their hostnames as they are created and promoted, so Twilio does not need to track that change.
 
 For most of the Twilio API calls, a 400 response because the resource already exists is OK.
 
@@ -123,7 +123,7 @@ Have the DigitalOcean Function URLs for incoming calls for stage and prod as des
 
 Note that the URLs are secrets!
 
-To use a new stage installation, update the Request URL of the incoming-stage Applicaton Resource.
+To use a new stage installation, update the Request URL of the incoming-stage Application Resource.
 
 To use a new prod installation, update the Requust URL of the incoming-prod Application Resource (to point to the new prod), and the incoming-stage Application Resource (to no longer point to the new prod).
 
@@ -157,7 +157,7 @@ List the SIP Domains to get the SIDs.
 
 Update the relevant SIP Domains.
 
-    twilio api:core:sip:domains:update --sid <sid> --voice-method POST --voice-url '<FUNCTION_URL>
+    twilio api:core:sip:domains:update --sid <sid> --voice-method POST --voice-url '<FUNCTION_URL>'
 
 ---
 
