@@ -25,17 +25,17 @@ For most of the Twilio API calls, a 400 response because the resource already ex
 
 To be done once.
 
-## Create Application Resources
+## Create Application Resources (TwiML apps)
 
 We create an Application Resource for stage and prod.
 
 Have the DigitalOcean Function URLs for incoming calls for stage and prod as described in dialplan-functions README-deploy, e.g.
 
-    <host>/api/v1/web/<namespace_id>/<package>/dial_sip_e164
+    <host>/api/v1/web/<namespace_id>/dialers/dial_sip_e164
 
 Note that the URLs are secrets!
 
-Create Application Resources (TwiML apps).
+Create Application Resources.
 
     twilio api:core:applications:create \
         --voice-method POST \
@@ -55,7 +55,7 @@ We create SIP Domains for stage, stage-nonemergency, prod, and prod-nonemergency
 
 Have the DigitalOcean Function URLs for outgoing calls for stage and prod as described in dialplan-functions README-deploy, e.g.
 
-    <host>/api/v1/web/<namespace_id>/<package>/dial_outgoing
+    <host>/api/v1/web/<namespace_id>/dialers/dial_outgoing
 
 Note that the URLs are secrets!
 
@@ -115,11 +115,11 @@ There doesn't seem to be any other way to do this.
 
 When a new DigitalOcean Functions installation is created or promoted, we must update the Application Resources and SIP Domains.
 
-## Update the Application Resources
+## Update the Application Resources (TwiML Apps)
 
 Have the DigitalOcean Function URLs for incoming calls for stage and prod as described in dialplan-functions README-deploy, e.g.
 
-    <host>/api/v1/web/<namespace_id>/<package>/dial_sip_e164
+    <host>/api/v1/web/<namespace_id>/dialers/dial_sip_e164
 
 Note that the URLs are secrets!
 
@@ -137,19 +137,19 @@ Update the relevant Application Resources.
 
     twilio api:core:applications:update \
         --sid <sid> \
-        --voice-url <host>/api/v1/web/<namespace_id>/<package>/dial_sip_e164
+        --voice-url <host>/api/v1/web/<namespace_id>/dialers/dial_sip_e164
 
 ## Update the SIP Domains
 
 Have the DigitalOcean Function URLs for outgoing calls for stage and prod as described in dialplan-functions README-deploy, e.g.
 
-    <host>/api/v1/web/<namespace_id>/<package>/dial_outgoing
+    <host>/api/v1/web/<namespace_id>/dialer/dial_outgoing
 
 Note that the URLs are secrets!
 
 To use a new stage installation, update the Voice URL of the direct-futel-stage and direct-futel-nonemergency-stage SIP Domains.
 
-To use a new prod installation, update the Voice URL of the direct-futel-prod SIP Domain (to point to the new prod) and direct-futel-nonemergency-prod SIP Domain (to no longer point to the new prod).
+To use a new prod installation, update the Voice URL of the direct-futel-prod and direct-futel-nonemergency-prod SIP Domains (to point to the new prod), and direct-futel-stage direct-futel-nonemergency-stage SIP Domains (to no longer point to the new prod).
 
 List the SIP Domains to get the SIDs.
 
