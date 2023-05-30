@@ -1,12 +1,21 @@
 Have server, extension, Twilio extension list password
 
-Server is one of
+<server> is one of
 - direct-futel-prod.sip.twilio.com
 - direct-futel-nonemergency-prod.sip.twilio.com
 - direct-futel-stage.sip.twilio.com
 - direct-futel-nonemergency-stage.sip.twilio.com
 
 # Set up Linksys PAP ATA device
+
+<dialplan> is one of:
+
+- Dialtone if emergency calls are enabled:
+  - (911|933|1[2-9]xxxxxxxxx|0111[2-9]xxxxxxxxx|[2-9]xxxxxxxxx|*|#|0)
+- Dialtone if emergency calls are not enabled:
+  - (1[2-9]xxxxxxxxx|0111[2-9]xxxxxxxxx|[2-9]xxxxxxxxx|*|#|0)
+- Menu:
+  - S0<:#>
 
 - nat mapping enable: no
 - nat keep alive: enable
@@ -19,14 +28,15 @@ Server is one of
 - user ID: <extension>
 - password: (Twilio credential list password)
 - call waiting serv: no
-- Dial plan for dialtone if emergency calls are enabled:
-  - (911|933|1[2-9]xxxxxxxxx|0111[2-9]xxxxxxxxx|[2-9]xxxxxxxxx|*|#|0)
-- Dial plan for dialtone if emergency calls are not enabled:
-  - (1[2-9]xxxxxxxxx|0111[2-9]xxxxxxxxx|[2-9]xxxxxxxxx|*|#|0)
-- Dial Plan for menu:
-  S0<:#>
+- dial plan: <dialplan>
 
 # Set up Grandstream HT701
+
+Grandstream HT701 cannot filter out 911 calls.
+
+<destinationn> is one of:
+- (blank) for dialtone
+- # for menu
 
 basic settings
 telnet server: no
@@ -51,7 +61,7 @@ outgoing call without registration: yes
 Disable Call-Waiting: yes
 Disable Call-Waiting Caller ID: yes
 Disable Call-Waiting Tone: yes
-Offhook Auto-Dial:
+Offhook Auto-Dial: <destination>
 Offhook Auto-Dial Delay: 0
 Hook Flash Timing: minimum: 500 maximum: 500
 
