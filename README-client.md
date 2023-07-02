@@ -61,10 +61,12 @@ outgoing call without registration: yes
 Disable Call-Waiting: yes
 Disable Call-Waiting Caller ID: yes
 Disable Call-Waiting Tone: yes
+Use # As Dial Key: no
 Offhook Auto-Dial:
 Offhook Auto-Dial Delay: 0
 Hook Flash Timing: minimum: 500 maximum: 500
 
+XXX no dialplan? Is this dialtone only?
 
 # Dial plan notes
 
