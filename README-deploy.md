@@ -2,7 +2,7 @@
 
 # Meta-Requirements
 
-The Digital Ocean Functions in the dialplan-functions project must be set up.
+The DigitalOcean Functions in the dialplan-functions project must be set up.
 
 # Requirements
 
@@ -125,7 +125,7 @@ Note that the URLs are secrets!
 
 To use a new stage installation, update the Request URL of the incoming-stage Application Resource.
 
-To use a new prod installation, update the Requust URL of the incoming-prod Application Resource (to point to the new prod), and the incoming-stage Application Resource (to no longer point to the new prod).
+To use a new prod installation, update the Request URL of the incoming-prod Application Resource (to point to the new prod), and the incoming-stage Application Resource (to no longer point to the new prod).
 
 List the Application Resources to get the relevant SIDs.
 
@@ -143,7 +143,7 @@ Update the relevant Application Resources.
 
 Have the DigitalOcean Function URLs for outgoing calls for stage and prod as described in dialplan-functions README-deploy, e.g.
 
-    <host>/api/v1/web/<namespace_id>/dialer/dial_outgoing
+    <host>/api/v1/web/<namespace_id>/dialers/dial_outgoing
 
 Note that the URLs are secrets!
 

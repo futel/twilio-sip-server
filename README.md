@@ -10,7 +10,7 @@ Allow SIP clients to register to Twilio SIP Domains and make outgoing and incomi
 - Incoming from PSTN => Twilio phone number => Twilio service => Twilio SIP domain => SIP client
 - Outgoing from SIP client => Twilio service => PSTN
 
-Twilio services used:
+Twilio components used:
 - Voice SIP Domains
 - Phone Numbers
 - Voice Credential Lists
