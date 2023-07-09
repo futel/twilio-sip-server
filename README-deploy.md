@@ -113,7 +113,7 @@ There doesn't seem to be any other way to do this.
 
 # Update for a new DigitalOcean Functions installation
 
-When a new DigitalOcean Functions installation is created or promoted, we must update the Application Resources and SIP Domains.
+When a new DigitalOcean Functions installation is created or promoted, we must update the relevant stage or prod Application Resources and SIP Domains.
 
 ## Update the Application Resources (TwiML Apps)
 

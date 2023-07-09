@@ -36,6 +36,8 @@ If enable_emergency is False in dialplan-functions extensions dict, use the none
 - Dial Plan for menu:
   S0<:#>
 
+XXX this is only for sending client to menu immediately? Not dialtone first?
+
 # Set up Grandstream HT701
 
 basic settings
