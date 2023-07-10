@@ -1,0 +1,14 @@
+{
+    "name": "asset-service",
+    "version": "0.0.0",
+    "private": true,
+    "dependencies": {
+        "node-fetch": "^2",
+        "twilio": "^3.56",
+        "@twilio/runtime-handler": "1.3.0"
+    },
+    "scripts": {
+        "start": "twilio-run",
+        "deploy": "twilio-run deploy"
+    }
+}

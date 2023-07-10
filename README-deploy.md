@@ -109,6 +109,29 @@ Visit the GUI for the SIP Domains and add the same "sip-direct" credential list 
 
 There doesn't seem to be any other way to do this.
 
+## Create Service
+
+We don't version the service, we only have one default service which all versions access.
+
+Fill asset-service/.env to match asset-service/.env.sample.
+
+Copy assets directory tree into asset-service/assets.
+
+Provision/transform assets.
+
+    ansible-playbook deploy/update_assets.yml
+
+Deploy.
+
+- cd asset-service
+- twilio serverless:deploy --environment default
+
+Note the domain, or view the "default" environment to see it:
+
+    twilio serverless:list environments
+
+In the DigitalOcean Functions, update .env to match .env.sample as described in digitalocean-functions README-deploy. Redeploy DigitalOcean functions.
+
 ---
 
 # Update for a new DigitalOcean Functions installation
@@ -158,6 +181,21 @@ List the SIP Domains to get the SIDs.
 Update the relevant SIP Domains.
 
     twilio api:core:sip:domains:update --sid <sid> --voice-method POST --voice-url '<FUNCTION_URL>'
+
+# Update Service
+
+We assume that the update does not invalidate any assets accessed by a prod or stage DigitalOcean Functions, so we can update the live default deployment in place.
+
+Copy assets directory tree into asset-service/assets.
+
+Provision/transform assets.
+
+    ansible-playbook deploy/update_assets.yml
+
+Deploy.
+
+- cd asset-service
+- twilio serverless:deploy --environment default
 
 ---
 

@@ -1,0 +1,25 @@
+---
+- hosts: localhost
+  tasks:
+  - name: load conf
+    include_vars: "conf.yml"
+  - name: clean sounds directories
+    file:
+      path: "{{ sound_directory }}"
+      state: absent
+  - name: clean sounds directories
+    file:
+      path: "{{ sound_directory }}"
+      state: directory
+  - name: update and copy statements
+    command: ruby scripts/update_audio_assets.rb {{ asset_directory }}/{{ item }} {{ sound_directory }}/{{ item }}
+    with_items:
+      - en/outgoing
+  # - name: copy hold music
+  #   copy:
+  #     src: "{{ asset_directory }}/{{ item }}"
+  #     dest: "{{ asterisk_sound_directory }}/var/lib/asterisk/moh"
+  #   with_items:
+  #     - var/lib/asterisk/moh/hold
+  #     - var/lib/asterisk/moh/operator
+  #     - var/lib/asterisk/moh/midi
