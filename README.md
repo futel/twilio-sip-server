@@ -7,14 +7,30 @@ Allow SIP clients to register to Twilio SIP Domains and make outgoing and incomi
 
 # Overview
 
-- Incoming from PSTN => Twilio phone number => Twilio service => Twilio SIP domain => SIP client
-- Outgoing from SIP client => Twilio service => PSTN
+- Incoming from PSTN => Phone Number => Application Resource  => SIP Domain => our SIP client
+- Outgoing from our SIP client => SIP Domain, DigitalOcean Functions => PSTN, Asterisk
 
-Twilio components used:
-- Voice SIP Domains
-- Phone Numbers
-- Voice Credential Lists
-- TwiML Apps
+Note that we don't implement incoming from Asterisk, this is non-optimal.
+
+Twilio components set up here are:
+- Application Resources (TwiML apps)
+  - for incoming calls to Twilio hosted phone numbers
+- SIP domains
+  - for some of our SIP clients to register to and make outgoing and incoming calls with Programmable Voice
+- Credentials, Credential Lists, Credential List Mappings
+  - for SIP clients to authenticate with SIP domains
+- Services
+  - for asset hosting
+
+Other Twilio components, not set up here:
+- Elastic SIP Trunks
+  - for some of our SIP clients to register and make outgoing calls with Asterisk
+
+Other components, not set up here:
+- DigitalOcean functions
+  - to serve TwiML to drive calls made through the SIP Domains
+- Asterisk
+  - to provide SIP extensions which are destinations for some outgoing and calls
 
 We are assuming the default outgoing voice geographic permissions are good. Currently these are US/Canada, Puerto Rico, Mexico, Dominican Republic. There are more NANPA destinations but most of those are expensive.
 
