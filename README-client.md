@@ -9,10 +9,10 @@ Have:
 - password (from Twilio Programmable Voice Credential List)
 
 Server is one of
-- direct-futel-prod.umatilla.sip.twilio.com
-- direct-futel-nonemergency-prod.umatilla.sip.twilio.com
-- direct-futel-stage.umatilla.sip.twilio.com
-- direct-futel-nonemergency-stage.umatilla.sip.twilio.com
+- direct-futel-prod.sip.twilio.com
+- direct-futel-nonemergency-prod.sip.twilio.com
+- direct-futel-stage.sip.twilio.com
+- direct-futel-nonemergency-stage.sip.twilio.com
 
 If enable_emergency is False in dialplan-functions extensions dict, use the nonemergency server.
 
@@ -35,8 +35,6 @@ If enable_emergency is False in dialplan-functions extensions dict, use the none
   - (1[2-9]xxxxxxxxx|0111[2-9]xxxxxxxxx|[2-9]xxxxxxxxx|*|#|0)
 - Dial Plan for menu:
   S0<:#>
-
-XXX this is only for sending client to menu immediately? Not dialtone first?
 
 # Set up Grandstream HT701
 

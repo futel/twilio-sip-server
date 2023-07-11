@@ -165,7 +165,7 @@ Update the relevant SIP Domains.
 
 We can add a new SIP client after it has been added to the DigitalOcean Functions as described in dialplan-functions README-deploy.
 
-To add a new SIP client, we create a Twilio phone number and create a credential in the Twilio Credential List. If there is an unused phone number and credential, they can be re-used instead of creating a new one.
+To add a new SIP client, we create a Twilio phone number and create a credential in the Twilio Credential List. If there is an unused phone number and credential, they can be re-used instead of creating a new one. We don't need to create a phone number for a client which doesn't allow incoming calls or outgoing emergency calls, and we can add a phone number later.
 
 ## Create a phone number
 
