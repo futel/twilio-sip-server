@@ -27,7 +27,7 @@ To be done once.
 
 ## Create Application Resources (TwiML apps)
 
-We create an Application Resource for stage and prod.
+We create one Application Resource each for stage and prod.
 
 Have the DigitalOcean Function URLs for incoming calls for stage and prod as described in dialplan-functions README-deploy, e.g.
 
