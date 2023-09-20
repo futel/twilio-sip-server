@@ -2,7 +2,7 @@
 
 # Meta-Requirements
 
-The DigitalOcean Functions in the dialplan-functions project must be set up.
+The AWS components in the dialplan-functions project must be set up.
 
 # Requirements
 
@@ -11,11 +11,11 @@ The DigitalOcean Functions in the dialplan-functions project must be set up.
 
 # Deploy and development notes
 
-We will set up Twilio Programmable Voice components for the stage and prod servers. The stage and prod components are identical except for which DigitalOcean Function URLs they reference. 
+We will set up Twilio Programmable Voice components for the stage and prod servers. The stage and prod components are identical except for which AWS API Gateway URLs they reference. 
 
-The initial deploy process is to create the stage components and at least one SIP credential and phone number, then point the relevant components to the DigitalOceans Functions prod instance. We add more SIP credentials and phone numbers as clients are added.
+The initial deploy process is to create the stage components and at least one SIP credential and phone number, then point the relevant components to the AWS API Gateway instance. We add more SIP credentials and phone numbers as clients are added.
 
-The stage and prod installations communicate with the corresponding Asterisk and DigitalOcean Functions instances. We update stage or prod by updating the DigitalOcean Function URLs they point to. The Asterisk installations update their hostnames as they are created and promoted, so Twilio does not need to track that change.
+The stage and prod installations communicate with the corresponding Asterisk and AWS API Gateway instances. We update stage or prod by updating the AWS API Gateway URLs they point to. The Asterisk installations update their hostnames as they are created and promoted, so Twilio does not need to track that change.
 
 For most of the Twilio API calls, a 400 response because the resource already exists is OK.
 
@@ -29,11 +29,9 @@ To be done once.
 
 We create one Application Resource each for stage and prod.
 
-Have the DigitalOcean Function URLs for incoming calls for stage and prod as described in dialplan-functions README-deploy, e.g.
+Have the AWS API Gateway URLs for incoming calls for stage and prod as described in dialplan-functions README-deploy, e.g.
 
-    <host>/api/v1/web/<namespace_id>/dialers/dial_sip_e164
-
-Note that the URLs are secrets!
+    https://stage.dialplans.phu73l.net/dial_sip_e164
 
 Create Application Resources.
 
@@ -47,17 +45,15 @@ Create Application Resources.
         --voice-url <PROD_FUNCTION_URL> \
         --friendly-name "incoming-prod"
 
-Note that we are not setting "--public-application-connect-enabled false", because that is causing an error. This may allow other Twilio customers to call this method, which could cause side effects or reveal information about our DigitalOcean Functions source.
+Note that we are not setting "--public-application-connect-enabled false", because that is causing an error. This may allow other Twilio customers to call this method, which could cause side effects or reveal information about our AWS components or content.
 
 ## Create new stage and prod emergency and nonemergency SIP domains
 
 We create SIP Domains for stage, stage-nonemergency, prod, and prod-nonemergency.
 
-Have the DigitalOcean Function URLs for outgoing calls for stage and prod as described in dialplan-functions README-deploy, e.g.
+Have the AWS API Gateway URLs for outgoing calls for stage and prod as described in dialplan-functions README-deploy, e.g.
 
-    <host>/api/v1/web/<namespace_id>/dialers/dial_outgoing
-
-Note that the URLs are secrets!
+    https://stage.dialplans.phu73l.net/dial_outgoing
 
 Create the SIP Domains.
 
@@ -111,17 +107,15 @@ There doesn't seem to be any other way to do this.
 
 ---
 
-# Update for a new DigitalOcean Functions installation
+# Update for a new dialplan-functions installation
 
-When a new DigitalOcean Functions installation is created or promoted, we must update the relevant stage or prod Application Resources and SIP Domains.
+When a new AWS API Gateway installation is created or promoted, we must update the relevant stage or prod Application Resources and SIP Domains.
 
 ## Update the Application Resources (TwiML Apps)
 
-Have the DigitalOcean Function URLs for incoming calls for stage and prod as described in dialplan-functions README-deploy, e.g.
+Have the AWS API Gateway URLs for incoming calls for stage and prod as described in dialplan-functions README-deploy, e.g.
 
-    <host>/api/v1/web/<namespace_id>/dialers/dial_sip_e164
-
-Note that the URLs are secrets!
+    https://stage.dialplans.phu73l.net/dial_sip_e164
 
 To use a new stage installation, update the Request URL of the incoming-stage Application Resource.
 
@@ -137,15 +131,13 @@ Update the relevant Application Resources.
 
     twilio api:core:applications:update \
         --sid <sid> \
-        --voice-url <host>/api/v1/web/<namespace_id>/dialers/dial_sip_e164
+        --voice-url https://stage.dialplans.phu73l.net/dial_sip_e164
 
 ## Update the SIP Domains
 
-Have the DigitalOcean Function URLs for outgoing calls for stage and prod as described in dialplan-functions README-deploy, e.g.
+Have the AWS API Gateway URLs for outgoing calls for stage and prod as described in dialplan-functions README-deploy, e.g.
 
-    <host>/api/v1/web/<namespace_id>/dialers/dial_outgoing
-
-Note that the URLs are secrets!
+    https://stage.dialplans.phu73l.net/dial_outgoing
 
 To use a new stage installation, update the Voice URL of the direct-futel-stage and direct-futel-nonemergency-stage SIP Domains.
 
