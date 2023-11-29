@@ -201,6 +201,8 @@ Use the web gui.
 
 # Notes
 
+To check a client connection: in the web console, voice:SIP domains:direct-futel-[nonemergency-]prod.sip.twilio.com:":registered SIP endpoints. Search for the credential name. There isn't a way to do this programmatically.
+
 todo:
   - use the cli to remove a credential
   - use the cli to CRUD a phone number
