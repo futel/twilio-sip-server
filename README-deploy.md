@@ -109,7 +109,7 @@ There doesn't seem to be any other way to do this.
 
 # Update for a new dialplan-functions installation
 
-When a new AWS API Gateway installation is created or promoted, we must update the relevant stage or prod Application Resources and SIP Domains.
+If the HTTPS interface of the dialplan-functions component changes, we must update the relevant stage or prod Application Resources and SIP Domains.
 
 ## Update the Application Resources (TwiML Apps)
 
