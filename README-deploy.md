@@ -175,8 +175,6 @@ Create new phone number
     - a message comes in: webhook
     - URL: blank
 
-- The API lets us assign emergency calling addresses https://www.twilio.com/docs/voice/sip/api/emergency-calling-api
-
 ## Create credential
 
 List the Credential Lists to get the SID of "sip-direct".
@@ -209,3 +207,5 @@ todo:
   - use the cli to add voice authentication to a sip domain?
   - needs a maintenance/verification process
     - sip-direct credential list is associated with the expected sip domains
+  - The API lets us assign emergency calling addresses for numbers https://www.twilio.com/docs/voice/sip/api/emergency-calling-api
+

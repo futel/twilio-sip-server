@@ -16,7 +16,7 @@ Server is one of
 
 If enable_emergency is False in dialplan-functions extensions dict, use the nonemergency server.
 
-# Set up Linksys PAP ATA device
+# Set up Linksys PAP, SPA-2102, etc. ATA device
 
 - nat mapping enable: no
 - nat keep alive: enable
@@ -62,11 +62,12 @@ Disable Call-Waiting: yes
 Disable Call-Waiting Caller ID: yes
 Disable Call-Waiting Tone: yes
 Use # As Dial Key: no
-Offhook Auto-Dial:
+Offhook Auto-Dial: #
 Offhook Auto-Dial Delay: 0
+Dial Plan: <empty>
 Hook Flash Timing: minimum: 500 maximum: 500
 
-XXX no dialplan? Is this dialtone only?
+Note that this has no dialplan, so dialtone clients will get the dialtone from our Twilio IVR. We could instead use the ATA's dialtone.
 
 # Dial plan notes
 
