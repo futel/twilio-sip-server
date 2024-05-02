@@ -20,14 +20,14 @@ If enable_emergency is False in dialplan-functions extensions dict, use the none
 
 - nat mapping enable: no
 - nat keep alive: enable
-- proxy: <server>
+- proxy: SERVER
 - use outbound proxy: no
 - register: yes
 - make call without reg: yes
 - ans call without reg: yes
-- display name: <extension>
-- user ID: <extension>
-- password: <password>
+- display name: EXTENSION
+- user ID: EXTENSION
+- password: PASSWORD
 - call waiting serv: no
 - Dial plan for dialtone if emergency calls are enabled:
   - (911|933|1[2-9]xxxxxxxxx|0111[2-9]xxxxxxxxx|[2-9]xxxxxxxxx|*|#|0)
@@ -50,11 +50,11 @@ always skip the firmware check: selected
 
 fxs port
 account active: yes
-primary sip server: <server>
+primary sip server: SERVER
 nat traversal: keep-alive
-sip user id: <extension>
-authenticate id: <extension>
-authenticate password: <password>
+sip user id: EXTENSION
+authenticate id: EXTENSION
+authenticate password: PASSWORD
 sip registration: yes
 unregister on reboot: no
 outgoing call without registration: yes
@@ -66,7 +66,7 @@ Hook Flash Timing: minimum: 500 maximum: 500
 For menu:
 - Offhook Auto-Dial: #
 - Offhook Auto-Dial Delay: 0
-- Dial Plan: <empty>
+- Dial Plan: (empty)
 For dialtone:
 - Offhook Auto-Dial:
 - Offhook Auto-Dial Delay:
@@ -83,9 +83,9 @@ Note that this has no dialplan, so dialtone clients will get the dialtone from o
     - Create a writable /log directory if desired
   - Update local/ftp
     - update 000000000000.cfg
-      - update first value of CONFIG_FILES to <extensions>.cfg eg "demo.cfg, sip.cfg"
-    - update config for extension in <extensions>.cfg eg demo.cfg
-      - update all values of reg.1.auth.password to <password>
+      - update first value of CONFIG_FILES to EXTENSION.cfg eg "demo.cfg, sip.cfg"
+    - update config for extension in EXTENSION.cfg eg demo.cfg
+      - update all values of reg.1.auth.password to PASSWORD
   - Copy local/ftp over ftp serve directory eg /srv/ftp  
   - Start the FTP server and serve ftp directory
   - Start phone, select setup, set up anonymous FTP from IP of server, save, reboot, wait for update to complete
@@ -93,7 +93,7 @@ Note that this has no dialplan, so dialtone clients will get the dialtone from o
 
 Notes
 - Phone admin password is 456, web user/password is Polycom/456
-- If another phone can reach the FTP server while it is running, it may download and update with the served config! To avoid that, replace 000000000000.cfg etc with <mac>.cfg (readable on underside of phone)
+- If another phone can reach the FTP server while it is running, it may download and update with the served config! To avoid that, replace 000000000000.cfg etc with MAC.cfg (readable on underside of phone)
 - https://blog.thelifeofkenneth.com/2011/05/how-to-configure-polycom-soundpoint-ip.html
 - SIP/Local Digitmap XXX S0<:#> S5<:#>
 - The distro is not correct, we get errors about sip.ld during load
