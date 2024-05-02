@@ -51,7 +51,7 @@ always skip the firmware check: selected
 fxs port
 account active: yes
 primary sip server: <server>
-nat traversal: no
+nat traversal: keep-alive
 sip user id: <extension>
 authenticate id: <extension>
 authenticate password: <password>
@@ -62,12 +62,38 @@ Disable Call-Waiting: yes
 Disable Call-Waiting Caller ID: yes
 Disable Call-Waiting Tone: yes
 Use # As Dial Key: no
-Offhook Auto-Dial: #
-Offhook Auto-Dial Delay: 0
-Dial Plan: <empty>
 Hook Flash Timing: minimum: 500 maximum: 500
+For menu:
+- Offhook Auto-Dial: #
+- Offhook Auto-Dial Delay: 0
+- Dial Plan: <empty>
+For dialtone:
+- Offhook Auto-Dial:
+- Offhook Auto-Dial Delay:
+- Dial Plan: (911|933|1[2-9]xxxxxxxxx|0111[2-9]xxxxxxxxx|[2-9]xxxxxxxxx|*|#|0)
 
 Note that this has no dialplan, so dialtone clients will get the dialtone from our Twilio IVR. We could instead use the ATA's dialtone.
+
+# Set up Polycom SoundPoint IP 501
+
+- If needed, factory reset somehow?
+- Update the application and config
+  - Set up and start a FTP server allowing anonymous read. Create a writable /log directory if desired.
+  - Update /local/ftp
+    - update 000000000000.cfg
+      - update first value of CONFIG_FILES to <extensions>.cfg eg "demo.cfg, sip.cfg"
+    - update config for extension in <extensions>.cfg
+      - update all values of reg.1.auth.password to <password>
+  - Unpack and serve local/ftp (eg by putting it in /srv/ftp)
+  - Start phone, select setup, set up anonymous FTP from IP of server, save, reboot, wait for update to complete
+  - Stop the FTP server
+
+Notes
+- Phone admin password is 456, web user/password is Polycom/456
+- If another phone can reach the FTP server while it is running, it may download and update with the served config! To avoid that, replace 000000000000.cfg etc with <mac>.cfg (readable on underside of phone)
+- https://blog.thelifeofkenneth.com/2011/05/how-to-configure-polycom-soundpoint-ip.html
+- SIP/Local Digitmap XXX S0<:#> S5<:#>
+- The distro is not correct, we get errors about sip.ld during load
 
 # Dial plan notes
 
@@ -79,4 +105,4 @@ Note that this has no dialplan, so dialtone clients will get the dialtone from o
     0111 followed by 2-9 followed by 9 digits (NANPA international ie 01 then E.164 with US country code)
     #
 
-Note that "[2-9]xxxxxxxxx" is allowing shorter sequences including 911 - the sequece length is apparently not enforced and a subsequence is accepted.
+Note that "[2-9]xxxxxxxxx" is allowing shorter sequences including 911 - the sequence length is apparently not enforced and a subsequence is accepted.
