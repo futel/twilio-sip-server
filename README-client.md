@@ -78,13 +78,16 @@ Note that this has no dialplan, so dialtone clients will get the dialtone from o
 
 - If needed, factory reset somehow?
 - Update the application and config
-  - Set up and start a FTP server allowing anonymous read. Create a writable /log directory if desired.
-  - Update /local/ftp
+  - Set up and start a FTP server allowing anonymous read
+  - Unpack SoundPoint_IP_SIP_3_2_7_release_sig_combined.zip where it will be served eg /srv/ftp
+    - Create a writable /log directory if desired
+  - Update local/ftp
     - update 000000000000.cfg
       - update first value of CONFIG_FILES to <extensions>.cfg eg "demo.cfg, sip.cfg"
-    - update config for extension in <extensions>.cfg
+    - update config for extension in <extensions>.cfg eg demo.cfg
       - update all values of reg.1.auth.password to <password>
-  - Unpack and serve local/ftp (eg by putting it in /srv/ftp)
+  - Copy local/ftp over ftp serve directory eg /srv/ftp  
+  - Start the FTP server and serve ftp directory
   - Start phone, select setup, set up anonymous FTP from IP of server, save, reboot, wait for update to complete
   - Stop the FTP server
 
