@@ -82,21 +82,27 @@ Note that this has no dialplan, so dialtone clients will get the dialtone from o
   - Unpack SoundPoint_IP_SIP_3_2_7_release_sig_combined.zip where it will be served eg /srv/ftp
     - Create a writable /log directory if desired
   - Update local/ftp
-    - update 000000000000.cfg
+    - copy 000000000000-directory.xml to MAC-directory.xml
+    - copy 000000000000.cfg to MAC.cfg
+    - update MAC.cfg    
       - update first value of CONFIG_FILES to EXTENSION.cfg eg "demo.cfg, sip.cfg"
     - update config for extension in EXTENSION.cfg eg demo.cfg
       - update all values of reg.1.auth.password to PASSWORD
-  - Copy local/ftp over ftp serve directory eg /srv/ftp  
+  - Copy local/ftp over ftp serve directory eg /srv/ftp
+  - XXX rm /srv/ftp/000000000000*
   - Start the FTP server and serve ftp directory
   - Start phone, select setup, set up anonymous FTP from IP of server, save, reboot, wait for update to complete
   - Stop the FTP server
+  - Deactivate FTP on the phone by deleting the server IP in the settings
 
 Notes
+- MAC is the ID found on the underside of the phone
 - Phone admin password is 456, web user/password is Polycom/456
 - If another phone can reach the FTP server while it is running, it may download and update with the served config! To avoid that, replace 000000000000.cfg etc with MAC.cfg (readable on underside of phone)
 - https://blog.thelifeofkenneth.com/2011/05/how-to-configure-polycom-soundpoint-ip.html
+- HTTP can be used instead of FTP
 - SIP/Local Digitmap XXX S0<:#> S5<:#>
-- The distro is not correct, we get errors about sip.ld during load
+- The distro is not correct for all models/revs, we sometimes get errors about sip.ld during load, which ones?
 
 # Dial plan notes
 
