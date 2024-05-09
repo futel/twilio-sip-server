@@ -30,8 +30,10 @@ If enable_emergency is False in dialplan-functions extensions dict, use the none
 - password: PASSWORD
 - call waiting serv: no
 - Dial plan for dialtone if emergency calls are enabled:
+  - XXX need all 3 digit
   - (911|933|1[2-9]xxxxxxxxx|0111[2-9]xxxxxxxxx|[2-9]xxxxxxxxx|*|#|0)
 - Dial plan for dialtone if emergency calls are not enabled:
+  - XXX need all 3 digit
   - (1[2-9]xxxxxxxxx|0111[2-9]xxxxxxxxx|[2-9]xxxxxxxxx|*|#|0)
 - Dial Plan for menu:
   S0<:#>
@@ -76,42 +78,46 @@ Note that this has no dialplan, so dialtone clients will get the dialtone from o
 
 # Set up Polycom SoundPoint IP 501
 
-- If needed, factory reset somehow?
+- If needed, reset
+  - with the phone UI, "reset local config", reboot, "reset device setting"
 - Update the application and config
   - Set up and start a FTP server allowing anonymous read
   - Unpack SoundPoint_IP_SIP_3_2_7_release_sig_combined.zip where it will be served eg /srv/ftp
     - Create a writable /log directory if desired
   - Update local/ftp
-    - copy 000000000000-directory.xml to MAC-directory.xml
-    - copy 000000000000.cfg to MAC.cfg
+    - copy exisiting config files to MAC.cfg and MAC-directory.xml
     - update MAC.cfg    
       - update first value of CONFIG_FILES to EXTENSION.cfg eg "demo.cfg, sip.cfg"
-    - update config for extension in EXTENSION.cfg eg demo.cfg
-      - update all values of reg.1.auth.password to PASSWORD
+    - update EXTENSION.cfg eg demo.cfg
+      - update all values of reg.*.auth.password to PASSWORD
   - Copy local/ftp over ftp serve directory eg /srv/ftp
-  - XXX rm /srv/ftp/000000000000*
   - Start the FTP server and serve ftp directory
-  - Start phone, select setup, set up anonymous FTP from IP of server, save, reboot, wait for update to complete
+  - Start phone, select setup, set up anonymous FTP with the server address, save, reboot, wait for update to complete
   - Stop the FTP server
-  - Deactivate FTP on the phone by deleting the server IP in the settings
+  - Set up server settings on the phone UI to use HTTP sp.prov.phu73l.net, no user/pass
 
 Notes
-- MAC is the ID found on the underside of the phone
+- MAC address is the ID found on the underside of the phone
 - Phone admin password is 456, web user/password is Polycom/456
-- If another phone can reach the FTP server while it is running, it may download and update with the served config! To avoid that, replace 000000000000.cfg etc with MAC.cfg (readable on underside of phone)
 - https://blog.thelifeofkenneth.com/2011/05/how-to-configure-polycom-soundpoint-ip.html
 - HTTP can be used instead of FTP
 - SIP/Local Digitmap XXX S0<:#> S5<:#>
 - The distro is not correct for all models/revs, we sometimes get errors about sip.ld during load, which ones?
+- If we don't know the mac address, 000000000000 will work in filenames, but then any phone that reaches the FTP server will use that config!
+- The phone HTTP server takes a while to spin up, not all settings can be entered in web UI
+- Provisioning is only done over FTP for historical reasons, HTTP is easier to set up
+- sp.prov.phu73l.net doesn't exist yet
 
 # Dial plan notes
 
     Dial if we match:
     911
     933
+    XXX we need all 3 digit numbers
     1 followed by 2-9 followed by 9 digits (E.164 with US country code)
     2-9 followed by 9 digits (NANPA ie US E.164 without country code)
     0111 followed by 2-9 followed by 9 digits (NANPA international ie 01 then E.164 with US country code)
     #
+    XXX we need *
 
 Note that "[2-9]xxxxxxxxx" is allowing shorter sequences including 911 - the sequence length is apparently not enforced and a subsequence is accepted.
