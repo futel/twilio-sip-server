@@ -9,10 +9,10 @@ Have:
 - password (from Twilio Programmable Voice Credential List)
 
 Server is one of
-- direct-futel-prod.sip.twilio.com
-- direct-futel-nonemergency-prod.sip.twilio.com
-- direct-futel-stage.sip.twilio.com
-- direct-futel-nonemergency-stage.sip.twilio.com
+- direct-futel-prod.sip.umatilla.twilio.com
+- direct-futel-nonemergency-prod.sip.umatilla.twilio.com
+- direct-futel-stage.sip.umatilla.twilio.com
+- direct-futel-nonemergency-stage.sip.umatilla.twilio.com
 
 If enable_emergency is False in dialplan-functions extensions dict, use the nonemergency server.
 
@@ -107,6 +107,31 @@ Notes
 - The phone HTTP server takes a while to spin up, not all settings can be entered in web UI
 - Provisioning is only done over FTP for historical reasons, HTTP is easier to set up
 - sp.prov.phu73l.net doesn't exist yet
+- is this how to factory reset?
+  - boot, wait for the welcome screen (start/setup/about)
+  - hold 468* (or maybe 1357)
+  - wait for password screen
+  - enter mac address with caps
+
+# Set up Polycom SoundStation or SoundStation IP 4000
+
+Notes
+
+- https://h30434.www3.hp.com/t5/Desk-and-IP-Conference-Phones/FAQ-How-can-I-setup-my-Phone-Provisioning-Download-Upgrade/td-p/8763442
+- https://support.hp.com/us-en/poly
+- https://h30434.www3.hp.com/t5/Desk-and-IP-Conference-Phones/FAQ-How-can-I-setup-my-Phone-Provisioning-Download-Upgrade/td-p/8763442?attachment-id=15182
+- https://h30434.www3.hp.com/t5/Desk-and-IP-Conference-Phones/FAQ-What-is-the-relevance-of-the-000000000000-cfg-or-lt-mac/td-p/8765529
+- https://h30434.www3.hp.com/t5/Desk-and-IP-Conference-Phones/FAQ-How-can-I-setup-my-Phone-Provisioning-Download-Upgrade/td-p/8763442
+- https://h30434.www3.hp.com/t5/Desk-and-IP-Conference-Phones/FAQ-How-can-I-setup-my-Phone-Provisioning-Download-Upgrade/td-p/8763442?attachment-id=15182
+- https://h30434.www3.hp.com/t5/Desk-and-IP-Conference-Phones/FAQ-How-can-I-setup-certain-Device-parameters-on-my-phone/td-p/8775566
+
+- is this how to factory reset?
+  - boot,
+  - wait for "loading application" and hit cancel
+  - wait for the welcome screen (start/setup/about)
+  - hold 68* (or maybe 1357)
+  - wait for password screen
+  - enter mac address with caps
 
 # Dial plan notes
 
@@ -121,3 +146,8 @@ Notes
     XXX we need *
 
 Note that "[2-9]xxxxxxxxx" is allowing shorter sequences including 911 - the sequence length is apparently not enforced and a subsequence is accepted.
+
+# Region notes
+
+We use the umatilla edge when connecting to the Twilio Sip Domain.
+https://www.twilio.com/docs/voice/api/sending-sip#localized-sip-uris
