@@ -54,6 +54,7 @@ We create SIP Domains for stage, stage-nonemergency, prod, and prod-nonemergency
 Have the AWS API Gateway URLs for outgoing calls for stage and prod as described in dialplan-functions README-deploy, e.g.
 
     https://stage.dialplans.phu73l.net/dial_outgoing
+    https://stage.dialplans.phu73l.net/dial_sip_e164
 
 Create the SIP Domains.
 
