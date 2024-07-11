@@ -6,11 +6,14 @@ Actual Twilio logs
 
 Web UI
 - monitor:calls:[call]
-- shows all requests/responses from Twilio with duration incl dialplan, assets
+- The "request inspector" shows all requests/responses from Twilio with duration, including the dialplan twiml request and each asset request.
+- According to some rando on stackexchange, there isn't a programmatic way to get this?
 
 Can we download or monitor these?
+- local/monitor/call_logs.py
 - https://www.twilio.com/docs/voice/tutorials/how-to-retrieve-call-logs/python
-- client.calls.list
+- client.calls.list, doesn't have what we want
+- The overall duration implies the total? Could make a small test context? Or just let the iterations run out, don't hang up?
 
 Lambda logs
 - Just to have the twiml serving time as a comparision
