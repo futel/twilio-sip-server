@@ -9,10 +9,10 @@ Have:
 - password (from Twilio Programmable Voice Credential List)
 
 Server is one of
-- direct-futel-prod.sip.umatilla.twilio.com
-- direct-futel-nonemergency-prod.sip.umatilla.twilio.com
-- direct-futel-stage.sip.umatilla.twilio.com
-- direct-futel-nonemergency-stage.sip.umatilla.twilio.com
+- direct-futel-prod.sip.twilio.com
+- direct-futel-nonemergency-prod.sip.twilio.com
+- direct-futel-stage.sip.twilio.com
+- direct-futel-nonemergency-stage.sip.twilio.com
 
 If enable_emergency is False in dialplan-functions extensions dict, use the nonemergency server.
 
