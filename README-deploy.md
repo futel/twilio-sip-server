@@ -2,7 +2,11 @@
 
 # Meta-Requirements
 
-The AWS components in the dialplan-functions project must be set up.
+Interfaced components in README.md must be set up:
+- asteriskserver
+- dialplan-assets
+- dialplan-functions
+- README-client.md
 
 # Requirements
 
