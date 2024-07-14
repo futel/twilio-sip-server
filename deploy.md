@@ -10,8 +10,10 @@ Interfaced components in README.md must be set up:
 
 # Requirements
 
-- Twilio CLI package 5.3.2 eg twilio-5.3.2.deb
+- Twilio CLI package eg twilio-5.21.1-amd64.deb.
 - Twilio profile or other way to use creds
+  - twilio profiles:create
+  - twilio profiles:use [id]
 
 # Deploy and development notes
 
