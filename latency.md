@@ -2,7 +2,7 @@ Currently, before the first interaction of every request (dialplan plays a sound
 
 ## How can we monitor the delay?
 
-### Actual Twilio logs
+### Twilio call logs
 
 Web UI
 - monitor:calls:[call]
@@ -22,12 +22,13 @@ Observations
   - Maybe ongoing periodic calls for monitoring and cache warming?
 - The cache seems fairly warm with frequent calls, maybe 80% cache hits?
   - What is our hoped for cache hit ratio?
-- The lambda functions take a long time, about 500ms
+- The lambda functions take a long time, about 500ms.
 
 ### S3 request logs
 - We log requests to the dialplan-assets-logs bucket.
 - What useful information is in the logs?
   - https://docs.aws.amazon.com/AmazonS3/latest/userguide/LogFormat.html
+  - ,,time,,,,,,request-uri,http-status,,,total-time-ms,,,,,,,,,host-header,,  
   - The fact that a request was made, indicating a cache miss.
   - The total time from the server's perspective.
   - The host header, ie the HTTP host the requester used, including any region.
@@ -38,10 +39,12 @@ Observations
 - We can validate the host used by production (and all other) requests, and flag any ones not using the correct region.
 
 ### Lambda logs
-- ...
+- Do we get any useful monitoring or logs? Response time?
+- Add logs for monitoring? Start/end of each response? Other components of making the response?
 
 ### Cache hit/miss?
 - What cache or edge are we expecting to be in use? How can we verify?
+- Cloudfront?
 - Actual cache logs
 
 ## How can we describe the delay?
@@ -51,7 +54,9 @@ What are the figures of interest? How can our future selves compare their curren
 ## What causes the delays?
 
 - Dialplan function rendering etc time between request/response
-    Sound file download (Twilio downloads every file between receiving TwiML and performing the document)
+- Sound file download
+  - Twilio downloads for every asset reference, including duplicates.
+  - All downloads happen before the first audio is played.
 
 ## What happens during the delays?
 
