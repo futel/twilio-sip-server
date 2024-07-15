@@ -16,7 +16,7 @@ calls = client.calls.list(limit=1000)
 
 calls = (
     call for call in calls
-    if call._from == "sip:monitor-one@direct-futel-stage.sip.twilio.com")
+    if call._from == "+15034681337") #"sip:monitor-one@direct-futel-stage.sip.twilio.com")
 
 # events
 # notifications
