@@ -31,13 +31,19 @@ For most of the Twilio API calls, a 400 response because the resource already ex
 
 To be done once.
 
+## Set up error log webhook
+
+In the web console, navigate to monitor... logs... errors... webhook. Set "Webhook URL" to the AWS API Gateway URL for logging on dialplan-functions:
+- https://prod.dialplans.phu73l.net/ops/log
+
 ## Create Application Resources (TwiML apps)
 
 We create one Application Resource each for stage and prod.
 
-Have the AWS API Gateway URLs for incoming calls for stage and prod as described in dialplan-functions README-deploy, e.g.
+Have the AWS API Gateway URLs for incoming calls for stage and prod as described in dialplan-functions DEPLOY.md:
 
-    https://stage.dialplans.phu73l.net/dial_sip_e164
+- https://stage.dialplans.phu73l.net/dial_sip_e164
+- https://prod.dialplans.phu73l.net/dial_sip_e164
 
 Create Application Resources.
 
