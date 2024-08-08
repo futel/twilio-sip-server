@@ -22,9 +22,11 @@ client = Client(account_sid, auth_token)
 # we have to pay for the number and the SIP leg.
 # What we want is a SIP URL for a client that will answer and not hang up.
 to = "+19713512383"
+# Context to test.
+context = "outgoing_detroit"
 # URL to return twiml. This is what we are testing, the total length of the call
 # over all requests. We could also send twiml to test specific content.
-url = "https://prod.dialplans.phu73l.net/ivr?context=directories_detroit"
+url = "https://prod.dialplans.phu73l.net/ivr?context={}".format(context)
 
 call = client.calls.create(
     to=to,
