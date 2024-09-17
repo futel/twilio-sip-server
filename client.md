@@ -2,19 +2,35 @@
 
 # Requirements
 
+## Set up traffic
+
 Ensure that TCP and UDP traffic is open to addresses in https://www.twilio.com/docs/sip-trunking/ip-addresses.
 
-Have:
-- extension (from Twilio Programmable Voice Credential List)
-- password (from Twilio Programmable Voice Credential List)
+## Have attributes
 
-Server is one of
-- direct-futel-prod.sip.twilio.com
-- direct-futel-nonemergency-prod.sip.twilio.com
-- direct-futel-stage.sip.twilio.com
-- direct-futel-nonemergency-stage.sip.twilio.com
+- extension
+  - from Twilio Programmable Voice Credential List
+- password
+  - from Twilio Programmable Voice Credential List
+- stage
+  - prod for production endpoints
+  - stage for testing
+- edge
+  - "umatilla" for all phones if not otherwise noted
+  - "ashburn" for Detroit
+- suffix
+  - "-nonemergency" if enable_emergency is False in dialplan-functions extensions dict
+  - empty otherwise
 
-If enable_emergency is False in dialplan-functions extensions dict, use the nonemergency server.
+## Determine server
+
+The server is almost always
+
+  direct-futel-prod.sip.umatilla.twilio.com
+
+Specifically, the server is
+
+  direct-futel{suffix}-{stage}.sip.{edge}.twilio.com
 
 # Set up Linksys PAP, SPA-2102, etc. ATA device
 
@@ -30,10 +46,10 @@ If enable_emergency is False in dialplan-functions extensions dict, use the none
 - password: PASSWORD
 - call waiting serv: no
 - Dial plan for dialtone if emergency calls are enabled:
-  - XXX need all 3 digit
+  - XXX need all 3 digit, why restrict, see grandstream
   - (911|933|1[2-9]xxxxxxxxx|0111[2-9]xxxxxxxxx|[2-9]xxxxxxxxx|*|#|0)
 - Dial plan for dialtone if emergency calls are not enabled:
-  - XXX need all 3 digit
+  - XXX need all 3 digit, why restrict, see grandstream
   - (1[2-9]xxxxxxxxx|0111[2-9]xxxxxxxxx|[2-9]xxxxxxxxx|*|#|0)
 - Dial Plan for menu:
   S0<:#>
@@ -53,6 +69,7 @@ always skip the firmware check: selected
 fxs port
 account active: yes
 primary sip server: SERVER
+sip transport: tls
 nat traversal: keep-alive
 sip user id: EXTENSION
 authenticate id: EXTENSION
@@ -72,9 +89,7 @@ For menu:
 For dialtone:
 - Offhook Auto-Dial:
 - Offhook Auto-Dial Delay:
-- Dial Plan: (911|933|1[2-9]xxxxxxxxx|0111[2-9]xxxxxxxxx|[2-9]xxxxxxxxx|*|#|0)
-
-Note that this has no dialplan, so dialtone clients will get the dialtone from our Twilio IVR. We could instead use the ATA's dialtone.
+- Dial Plan: {x+|*|#}
 
 # Set up Polycom SoundPoint IP 501
 
