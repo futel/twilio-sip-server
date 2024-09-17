@@ -1,2 +1,13 @@
 python-dotenv
 twilio==8.1.0
+#pyVoIP
+
+# pysipsimple
+# cython<3
+# dnspython
+# lxml
+# twisted
+# python-dateutil
+# greenlet
+# zope.interface
+# requests
