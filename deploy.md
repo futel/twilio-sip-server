@@ -59,39 +59,6 @@ Create Application Resources.
 
 Note that we are not setting "--public-application-connect-enabled false", because that is causing an error. This may allow other Twilio customers to call this method, which could cause side effects or reveal information about our AWS components or content.
 
-## Create test Application Resource (TwiML app)
-
-Create an Application Resource for testing.
-
-    twilio api:core:applications:create \
-        --voice-method POST \
-        --voice-url "https://twimlets.com/holdmusic?Bucket=com.twilio.music.classical" \
-        --friendly-name "test"
-
-Notes:
-- This is used by local/monitor.
-- This is nonoptimal, what we really want is a SIP client that won't hang up or interact with our dialplans.
-
-## Create test phone number
-
-Use the web GUI; the APIs may allow us to do this, but maybe not.
-
-Create new phone number
-- friendly name: test
-- emergency calling: not registered
-- voice configuration:
-    - configure with: TwiML App
-    - TwiML App: test
-- messaging configuation:
-    - a message comes in: webhook
-    - URL: blank
-
-Notes:
-- This is used by local/monitor.
-- This is nonoptimal, what we really want is a SIP client that won't hang up or interact with our dialplans.
-
-Note that this is nonoptimal, what we really want is a SIP client that won't hang up or interact with our dialplan.
-
 ## Create new stage and prod emergency and nonemergency SIP domains
 
 We create SIP Domains for stage, stage-nonemergency, prod, and prod-nonemergency.
@@ -205,7 +172,7 @@ To add a new SIP client, we create or re-use a Twilio phone number and create a 
 
 ## Requirements
 
-Extension has been added to AWS Lambda as described in dialplan-functions README-client.
+Extension has been added to AWS Lambda as described in dialplan-functions doc/client.md.
 
 ## Create a phone number
 
