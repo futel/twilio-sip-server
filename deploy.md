@@ -59,9 +59,7 @@ Create Application Resources.
 
 Note that we are not setting "--public-application-connect-enabled false", because that is causing an error. This may allow other Twilio customers to call this method, which could cause side effects or reveal information about our AWS components or content.
 
-## Create new stage and prod emergency and nonemergency SIP domains
-
-We create SIP Domains for stage, stage-nonemergency, prod, and prod-nonemergency.
+## Create new stage and prod SIP domains
 
 Have the AWS API Gateway URLs for outgoing calls for stage and prod as described in dialplan-functions README-deploy, e.g.
 
@@ -72,11 +70,7 @@ Create the SIP Domains.
 
     twilio api:core:sip:domains:create --domain-name direct-futel-stage.sip.twilio.com --friendly-name direct-futel-stage --sip-registration --emergency-calling-enabled --voice-method POST --voice-url '<STAGE FUNCTION URL>'
 
-    twilio api:core:sip:domains:create --domain-name direct-futel-nonemergency-stage.sip.twilio.com --friendly-name direct-futel-nonemergency-stage --sip-registration --voice-method POST --voice-url '<STAGE FUNCTION URL>'
-
     twilio api:core:sip:domains:create --domain-name direct-futel-prod.sip.twilio.com --friendly-name direct-futel-prod --sip-registration --emergency-calling-enabled --voice-method POST --voice-url '<PROD FUNCTION URL>'
-
-    twilio api:core:sip:domains:create --domain-name direct-futel-nonemergency-prod.sip.twilio.com --friendly-name direct-futel-nonemergency-prod --sip-registration --voice-method POST --voice-url '<PROD FUNCTION URL>'
 
 Note that if the SIP Domain already exists, this will fail instead of updating the domain. The SIP Domains should instead be updated as in "Update the SIP Domains".
 
@@ -102,13 +96,9 @@ We create one mapping for each SIP Domain.
 
 Use the SIDs of the SIP Domains and Credential List found in the previous steps.
 
-    twilio api:core:sip:domains:auth:registrations:credential-list-mappings:create --domain-sid <STAGE EMERGENCY DOMAIN SID> --credential-list-sid <CREDENTIAL LIST SID>
+    twilio api:core:sip:domains:auth:registrations:credential-list-mappings:create --domain-sid <STAGE DOMAIN SID> --credential-list-sid <CREDENTIAL LIST SID>
 
-    twilio api:core:sip:domains:auth:registrations:credential-list-mappings:create --domain-sid <STAGE NONEMERGENCY DOMAIN SID> --credential-list-sid <CREDENTIAL LIST SID>
-
-    twilio api:core:sip:domains:auth:registrations:credential-list-mappings:create --domain-sid <PROD EMERGENCY DOMAIN SID> --credential-list-sid <CREDENTIAL LIST SID>
-
-    twilio api:core:sip:domains:auth:registrations:credential-list-mappings:create --domain-sid <PROD NONEMERGENCY DOMAIN SID> --credential-list-sid <CREDENTIAL LIST SID>
+    twilio api:core:sip:domains:auth:registrations:credential-list-mappings:create --domain-sid <PROD DOMAIN SID> --credential-list-sid <CREDENTIAL LIST SID>
 
 ## Set voice authentication credentials for SIP Domains
 
@@ -152,9 +142,9 @@ Have the AWS API Gateway URLs for outgoing calls for stage and prod as described
 
     https://stage.dialplans.phu73l.net/dial_outgoing
 
-To use a new stage installation, update the Voice URL of the direct-futel-stage and direct-futel-nonemergency-stage SIP Domains.
+To use a new stage installation, update the Voice URL of the direct-futel-stage SIP Domain.
 
-To use a new prod installation, update the Voice URL of the direct-futel-prod and direct-futel-nonemergency-prod SIP Domains (to point to the new prod), and direct-futel-stage direct-futel-nonemergency-stage SIP Domains (to no longer point to the new prod).
+To use a new prod installation, update the Voice URL of the direct-futel-prod SIP Domain (to point to the new prod), and direct-futel-stage SIP Domain (to no longer point to the new prod).
 
 List the SIP Domains to get the SIDs.
 
@@ -212,7 +202,7 @@ Use the web gui.
 
 # Notes
 
-To check a client connection: in the web console, voice:SIP domains:direct-futel-[nonemergency-]prod.sip.twilio.com:":registered SIP endpoints. Search for the credential name. There isn't a way to do this programmatically.
+To check a client connection: in the web console, voice:SIP domains:direct-futel-prod.sip.umatilla.twilio.com:registered SIP endpoints. Search for the credential name. There isn't a way to do this programmatically.
 
 todo:
   - use the cli to remove a credential

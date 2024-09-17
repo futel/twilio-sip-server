@@ -18,9 +18,6 @@ Ensure that TCP and UDP traffic is open to addresses in https://www.twilio.com/d
 - edge
   - "umatilla" for all phones if not otherwise noted
   - "ashburn" for Detroit
-- suffix
-  - "-nonemergency" if enable_emergency is False in dialplan-functions extensions dict
-  - empty otherwise
 
 ## Determine server
 
@@ -30,7 +27,7 @@ The server is almost always
 
 Specifically, the server is
 
-  direct-futel{suffix}-{stage}.sip.{edge}.twilio.com
+  direct-futel-{stage}.sip.{edge}.twilio.com
 
 # Set up Linksys PAP, SPA-2102, etc. ATA device
 
