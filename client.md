@@ -8,7 +8,7 @@ Ensure that TCP and UDP traffic is open to addresses in https://www.twilio.com/d
 
 ## Have attributes
 
-- extension
+- exension
   - from Twilio Programmable Voice Credential List
 - password
   - from Twilio Programmable Voice Credential List
@@ -21,26 +21,26 @@ Ensure that TCP and UDP traffic is open to addresses in https://www.twilio.com/d
 
 ## Determine server
 
-The server is almost always
+The server is
+
+  direct-futel-{stage}.sip.{stage}.twilio.com
+
+This is almost always
 
   direct-futel-prod.sip.umatilla.twilio.com
-
-Specifically, the server is
-
-  direct-futel-{stage}.sip.{edge}.twilio.com
 
 # Set up Linksys PAP, SPA-2102, etc. ATA device
 
 - nat mapping enable: no
 - nat keep alive: enable
-- proxy: SERVER
+- proxy: {server}
 - use outbound proxy: no
 - register: yes
 - make call without reg: yes
 - ans call without reg: yes
-- display name: EXTENSION
-- user ID: EXTENSION
-- password: PASSWORD
+- display name: {extension}
+- user ID: {extension}
+- password: {password}
 - call waiting serv: no
 - Dial plan for dialtone if emergency calls are enabled:
   - XXX need all 3 digit, why restrict, see grandstream
@@ -65,15 +65,17 @@ always skip the firmware check: selected
 
 fxs port
 account active: yes
-primary sip server: SERVER
+primary sip server: {server}
 sip transport: tls
 nat traversal: keep-alive
-sip user id: EXTENSION
-authenticate id: EXTENSION
-authenticate password: PASSWORD
+sip user id: {extension}
+authenticate id: {password}
+authenticate password: {password}
 sip registration: yes
 unregister on reboot: no
 outgoing call without registration: yes
+Registration Expiration: 10 minutes
+Reregister before Expiration: 120 seconds
 Disable Call-Waiting: yes
 Disable Call-Waiting Caller ID: yes
 Disable Call-Waiting Tone: yes
