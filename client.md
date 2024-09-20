@@ -8,7 +8,7 @@ Ensure that TCP and UDP traffic is open to addresses in https://www.twilio.com/d
 
 ## Have attributes
 
-- exension
+- extension
   - from Twilio Programmable Voice Credential List
 - password
   - from Twilio Programmable Voice Credential List
@@ -21,13 +21,24 @@ Ensure that TCP and UDP traffic is open to addresses in https://www.twilio.com/d
 
 ## Determine server
 
-The server is
+When using {primary-sip-server}, and {outbound-proxy},
 
-  direct-futel-{stage}.sip.{stage}.twilio.com
+- {primary-sip-server}
+  - direct-futel-{stage}.sip.twilio.com
+- {outbound-proxy}
+  - sip.{edge}.twilio.com
 
 This is almost always
+- direct-futel-prod.sip.twilio.com
+- sip.umatilla.twilio.com
 
-  direct-futel-prod.sip.umatilla.twilio.com
+When using {server},
+
+- {server}
+  - direct-futel-{stage}.sip.{edge}.twilio.com
+
+This is almost always
+- direct-futel-prod.sip.umatilla.twilio.com
 
 # Set up Linksys PAP, SPA-2102, etc. ATA device
 
@@ -65,7 +76,8 @@ always skip the firmware check: selected
 
 fxs port
 account active: yes
-primary sip server: {server}
+primary sip server: {primary-sip-server}
+outbound proxy: {outbound-proxy}
 sip transport: tls
 nat traversal: keep-alive
 sip user id: {extension}
@@ -75,7 +87,7 @@ sip registration: yes
 unregister on reboot: no
 outgoing call without registration: yes
 Registration Expiration: 10 minutes
-Reregister before Expiration: 120 seconds
+Reregister before Expiration: 300 seconds
 Disable Call-Waiting: yes
 Disable Call-Waiting Caller ID: yes
 Disable Call-Waiting Tone: yes
