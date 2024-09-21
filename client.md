@@ -44,11 +44,14 @@ This is almost always
 
 - nat mapping enable: no
 - nat keep alive: enable
-- proxy: {server}
-- use outbound proxy: no
+- proxy: {primary-sip-server}
+- outbound proxy: {server}
+- use outbound proxy: yes
+- use ob proxy in dialog: yes
 - register: yes
 - make call without reg: yes
 - ans call without reg: yes
+- register expires: 600
 - display name: {extension}
 - user ID: {extension}
 - password: {password}
