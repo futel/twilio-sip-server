@@ -21,8 +21,6 @@ Ensure that TCP and UDP traffic is open to addresses in https://www.twilio.com/d
 
 ## Determine server
 
-When using {primary-sip-server}, and {outbound-proxy},
-
 - {primary-sip-server}
   - direct-futel-{stage}.sip.twilio.com
 - {outbound-proxy}
@@ -32,20 +30,15 @@ This is almost always
 - direct-futel-prod.sip.twilio.com
 - sip.umatilla.twilio.com
 
-When using {server},
-
-- {server}
-  - direct-futel-{stage}.sip.{edge}.twilio.com
-
-This is almost always
-- direct-futel-prod.sip.umatilla.twilio.com
-
-# Set up Linksys PAP, SPA-2102, etc. ATA device
+# Set up Linksys PAP or SPA-2102
 
 - nat mapping enable: no
-- nat keep alive: enable
+- nat keep alive enable: yes
+- SPA-2102:
+  - SIP Transport: TLS
+  - SIP Port: 5061
 - proxy: {primary-sip-server}
-- outbound proxy: {server}
+- outbound proxy: {outbound-proxy}
 - use outbound proxy: yes
 - use ob proxy in dialog: yes
 - register: yes
@@ -63,7 +56,7 @@ This is almost always
   - XXX need all 3 digit, why restrict, see grandstream
   - (1[2-9]xxxxxxxxx|0111[2-9]xxxxxxxxx|[2-9]xxxxxxxxx|*|#|0)
 - Dial Plan for menu:
-  S0<:#>
+  - S0<:#>
 
 # Set up Grandstream HT701
 
@@ -84,7 +77,7 @@ outbound proxy: {outbound-proxy}
 sip transport: tls
 nat traversal: keep-alive
 sip user id: {extension}
-authenticate id: {password}
+authenticate id: {extension}
 authenticate password: {password}
 sip registration: yes
 unregister on reboot: no
@@ -99,7 +92,7 @@ Hook Flash Timing: minimum: 500 maximum: 500
 For menu:
 - Offhook Auto-Dial: #
 - Offhook Auto-Dial Delay: 0
-- Dial Plan: (empty)
+- Dial Plan: (empty, note device will update this to "{ x+ | *x+ | *xx*x+ }")
 For dialtone:
 - Offhook Auto-Dial:
 - Offhook Auto-Dial Delay:
@@ -180,3 +173,6 @@ Note that "[2-9]xxxxxxxxx" is allowing shorter sequences including 911 - the seq
 
 We use the umatilla edge when connecting to the Twilio Sip Domain.
 https://www.twilio.com/docs/voice/api/sending-sip#localized-sip-uris
+
+Prevous configs didn't use primary-sip-server/outbound-proxy and instead used direct-futel-{stage}.sip.{edge}.twilio.com eg direct-futel-prod.sip.umatilla.twilio.com.
+
