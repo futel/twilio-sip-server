@@ -6,11 +6,11 @@ Interfaced components in README.md must be set up:
 - asteriskserver
 - dialplan-assets
 - dialplan-functions
-- README-client.md
+- client.md
 
 # Requirements
 
-- Twilio CLI package eg twilio-5.21.1-amd64.deb.
+- Twilio CLI package eg twilio-5.22.3-amd64.deb.
 - Twilio profile or other way to use creds
   - twilio profiles:create
   - twilio profiles:use [id]
