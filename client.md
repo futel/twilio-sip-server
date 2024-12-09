@@ -37,6 +37,8 @@ This is almost always
 - SPA-2102:
   - SIP Transport: TLS
   - SIP Port: 5061
+- PAP2:
+  - SIP Port: 5060
 - proxy: {primary-sip-server}
 - outbound proxy: {outbound-proxy}
 - use outbound proxy: yes
