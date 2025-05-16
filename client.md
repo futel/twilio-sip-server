@@ -32,6 +32,15 @@ This is almost always
 
 # Set up Linksys PAP or SPA-2102
 
+- {dialplan} for dialtone if emergency calls are enabled:
+  - XXX need all 3 digit, why restrict, see grandstream
+  - (911|933|1[2-9]xxxxxxxxx|0111[2-9]xxxxxxxxx|[2-9]xxxxxxxxx|*|#|0)
+- {dialplan} for dialtone if emergency calls are not enabled:
+  - XXX need all 3 digit, why restrict, see grandstream
+  - (1[2-9]xxxxxxxxx|0111[2-9]xxxxxxxxx|[2-9]xxxxxxxxx|*|#|0)
+- {dialplan} for menu:
+  - S0<:#>
+
 - nat mapping enable: no
 - nat keep alive enable: yes
 - SPA-2102:
@@ -51,56 +60,59 @@ This is almost always
 - user ID: {extension}
 - password: {password}
 - call waiting serv: no
-- Dial plan for dialtone if emergency calls are enabled:
-  - XXX need all 3 digit, why restrict, see grandstream
-  - (911|933|1[2-9]xxxxxxxxx|0111[2-9]xxxxxxxxx|[2-9]xxxxxxxxx|*|#|0)
-- Dial plan for dialtone if emergency calls are not enabled:
-  - XXX need all 3 digit, why restrict, see grandstream
-  - (1[2-9]xxxxxxxxx|0111[2-9]xxxxxxxxx|[2-9]xxxxxxxxx|*|#|0)
-- Dial Plan for menu:
-  - S0<:#>
+- Dial plan: {dialplan}
 
-# Set up Grandstream HT701
+# Set up Grandstream HT701 or HT801
+
+## Have attributes
+
+- {autodial} #
+- {autodialdelay} 0
+- {dialplan} (empty, note device will update this to "{ x+ | *x+ | *xx*x+ }")
 
 basic settings
-telnet server: no
+- telnet server: no
 
 advanced settings
-admin password:
-firmware server path: blank
-config server path: blank
-automatic upgrade: no
-always skip the firmware check: selected
+- admin password:
+- firmware server path: blank
+- config server path: blank
+- automatic upgrade: no
+- always skip the firmware check: selected
 
 fxs port
-account active: yes
-primary sip server: {primary-sip-server}
-outbound proxy: {outbound-proxy}
-sip transport: tls
-nat traversal: keep-alive
-sip user id: {extension}
-authenticate id: {extension}
-authenticate password: {password}
-sip registration: yes
-unregister on reboot: no
-outgoing call without registration: yes
-Registration Expiration: 10 minutes
-Reregister before Expiration: 300 seconds
-Disable Call-Waiting: yes
-Disable Call-Waiting Caller ID: yes
-Disable Call-Waiting Tone: yes
-Use # As Dial Key: no
-Hook Flash Timing: minimum: 500 maximum: 500
-For menu:
-- Offhook Auto-Dial: #
-- Offhook Auto-Dial Delay: 0
-- Dial Plan: (empty, note device will update this to "{ x+ | *x+ | *xx*x+ }")
-For dialtone:
-- Offhook Auto-Dial:
-- Offhook Auto-Dial Delay:
-- Dial Plan: {x+|*|#}
+- account active: yes
+- primary sip server: {primary-sip-server}
+- outbound proxy: {outbound-proxy}
+- sip transport:
+  - HT701: TCP
+  - HT801: TLS
+- nat traversal: keep-alive
+- sip user id: {extension}
+- authenticate id: {extension}
+- authenticate password: {password}
+- sip registration: yes
+- unregister on reboot: no
+- outgoing call without registration: yes
+- Registration Expiration: 10 minutes
+- Reregister before Expiration: 300 seconds
+- Disable Call-Waiting: yes
+- Disable Call-Waiting Caller ID: yes
+- Disable Call-Waiting Tone: yes
+- Use # As Dial Key: no
+- Hook Flash Timing: minimum: 500 maximum: 500
+- Offhook Auto-Dial: {autodial}
+- Offhook Auto-Dial Delay: {autodialdelay}
+- Dial Plan: {dialplan}
 
 # Set up Polycom SoundPoint IP 501
+
+## Have attributes
+
+- {MAC} MAC address of device eg 0004f20483ef
+  - can be found on the back of the device and in the menu?
+- {EXTENSION} extension from Twilio Programmable Voice Credential List
+  - eg demo
 
 - If needed, reset
   - with the phone UI, "reset local config", reboot, "reset device setting"
@@ -109,18 +121,20 @@ For dialtone:
   - Unpack SoundPoint_IP_SIP_3_2_7_release_sig_combined.zip where it will be served eg /srv/ftp
     - Create a writable /log directory if desired
   - Update local/ftp
-    - copy exisiting config files to MAC.cfg and MAC-directory.xml
-    - update MAC.cfg    
-      - update first value of CONFIG_FILES to EXTENSION.cfg eg "demo.cfg, sip.cfg"
-    - update EXTENSION.cfg eg demo.cfg
-      - update all values of reg.*.auth.password to PASSWORD
+    - copy exisiting config files to {MAC}.cfg and {MAC}-directory.xml
+      - eg copy demo.cfg to 0004f20483ee.cfg
+    - update {MAC}.cfg    
+      - update first value of CONFIG_FILES to {EXTENSION}.cfg eg "demo.cfg, sip.cfg"
+    - update {EXTENSION}.cfg eg demo.cfg
+      - update all values of reg.*.auth.password to {PASSWORD}
   - Copy local/ftp over ftp serve directory eg /srv/ftp
   - Start the FTP server and serve ftp directory
   - Start phone, select setup, set up anonymous FTP with the server address, save, reboot, wait for update to complete
   - Stop the FTP server
   - Set up server settings on the phone UI to use HTTP sp.prov.phu73l.net, no user/pass
 
-Notes
+## Notes
+
 - MAC address is the ID found on the underside of the phone
 - Phone admin password is 456, web user/password is Polycom/456
 - https://blog.thelifeofkenneth.com/2011/05/how-to-configure-polycom-soundpoint-ip.html
