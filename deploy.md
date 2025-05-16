@@ -68,9 +68,21 @@ Have the AWS API Gateway URLs for outgoing calls for stage and prod as described
 
 Create the SIP Domains.
 
-    twilio api:core:sip:domains:create --domain-name direct-futel-stage.sip.twilio.com --friendly-name direct-futel-stage --sip-registration --emergency-calling-enabled --voice-method POST --voice-url '<STAGE FUNCTION URL>'
+    twilio api:core:sip:domains:create \
+      --domain-name=direct-futel-stage.sip.twilio.com \
+      --friendly-name=direct-futel-stage \
+      --sip-registration \
+      --emergency-calling-enabled \
+      --voice-method=POST \
+      --voice-url='<STAGE FUNCTION URL>'
 
-    twilio api:core:sip:domains:create --domain-name direct-futel-prod.sip.twilio.com --friendly-name direct-futel-prod --sip-registration --emergency-calling-enabled --voice-method POST --voice-url '<PROD FUNCTION URL>'
+    twilio api:core:sip:domains:create \
+      --domain-name=direct-futel-prod.sip.twilio.com \
+      --friendly-name=direct-futel-prod \
+      --sip-registration \
+      --emergency-calling-enabled \
+      --voice-method=POST \
+      --voice-url='<STAGE FUNCTION URL>'
 
 Note that if the SIP Domain already exists, this will fail instead of updating the domain. The SIP Domains should instead be updated as in "Update the SIP Domains".
 
