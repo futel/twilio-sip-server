@@ -2,6 +2,10 @@
 
 # Requirements
 
+## Set up SIP client on Twilio
+
+SIP client should be set up as listed in twilio.md.
+
 ## Set up traffic
 
 Ensure that TCP and UDP traffic is open to addresses in https://www.twilio.com/docs/sip-trunking/ip-addresses.
@@ -62,7 +66,43 @@ This is almost always
 - call waiting serv: no
 - Dial plan: {dialplan}
 
-# Set up Grandstream HT701 or HT801
+# Set up Grandstream HT801v2
+
+## Have attributes
+
+- {autodial} #
+- {autodialdelay} 0
+- {dialplan} (empty, note device will update this to "{ x+ | *x+ | *xx*x+ }")
+
+system settings / security settings / user info management
+- enable strict password rules: unchecked
+- admin password:
+
+port settings / fxs port / general settings
+- account active: yes
+- primary sip server: {primary-sip-server}
+- outbound proxy: {outbound-proxy}
+- sip user id: {extension}
+- authenticate id: {extension}
+- authenticate password: {password}
+
+port settings / fxs port / sip settings
+- SIP transport: TLS
+- register expiration (minutes): 10
+- reregister before expiration (seconds): 300
+- Enable SIP OPTIONS/NOTIFY Keep Alive: NOTIFY
+
+port settings / fxs port / call settings
+- Offhook Auto-Dial: {autodial}
+- Offhook Auto-Dial Delay: {autodialdelay}
+- Dial Plan: {dialplan}
+- Use # as Dial Key: unchecked
+- Disable # as Redial Key: checked
+- Disable Call-Waiting: checked
+- Disable Call-Waiting Caller ID: checked
+- Disable Call-Waiting Tone: checked
+
+# Set up Grandstream HT701 or HT801 or HT802
 
 ## Have attributes
 
@@ -71,10 +111,15 @@ This is almost always
 - {dialplan} (empty, note device will update this to "{ x+ | *x+ | *xx*x+ }")
 
 basic settings
-- telnet server: no
+- HT701
+  - telnet server: no
+- HT801
+  - disable telnet:
 
 advanced settings
 - admin password:
+- ht802
+  - enable strict password rules: no
 - firmware server path: blank
 - config server path: blank
 - automatic upgrade: no
@@ -100,10 +145,12 @@ fxs port
 - Disable Call-Waiting Caller ID: yes
 - Disable Call-Waiting Tone: yes
 - Use # As Dial Key: no
+- Disable # As Redial Key: yes
 - Hook Flash Timing: minimum: 500 maximum: 500
 - Offhook Auto-Dial: {autodial}
 - Offhook Auto-Dial Delay: {autodialdelay}
 - Dial Plan: {dialplan}
+
 
 # Set up Polycom SoundPoint IP 501
 
@@ -119,9 +166,11 @@ fxs port
 - Update the application and config
   - Set up and start a FTP server allowing anonymous read
   - Unpack SoundPoint_IP_SIP_3_2_7_release_sig_combined.zip where it will be served eg /srv/ftp
+    - remove 000000000000.cfg
+    - don't overwite any files
     - Create a writable /log directory if desired
   - Update local/ftp
-    - copy exisiting config files to {MAC}.cfg and {MAC}-directory.xml
+    - copy existing config files to {MAC}.cfg and {MAC}-directory.xml
       - eg copy demo.cfg to 0004f20483ee.cfg
     - update {MAC}.cfg    
       - update first value of CONFIG_FILES to {EXTENSION}.cfg eg "demo.cfg, sip.cfg"
@@ -129,7 +178,11 @@ fxs port
       - update all values of reg.*.auth.password to {PASSWORD}
   - Copy local/ftp over ftp serve directory eg /srv/ftp
   - Start the FTP server and serve ftp directory
-  - Start phone, select setup, set up anonymous FTP with the server address, save, reboot, wait for update to complete
+  - Start phone, select setup
+    - menu/setup/advanced/admin/network/server
+    - ftp, address, anonymous
+    - menu password 456
+    - save, reboot, wait for update to complete
   - Stop the FTP server
   - Set up server settings on the phone UI to use HTTP sp.prov.phu73l.net, no user/pass
 
