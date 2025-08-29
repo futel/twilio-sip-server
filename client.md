@@ -114,7 +114,7 @@ basic settings
 - HT701
   - telnet server: no
 - HT801
-  - disable telnet:
+  - disable telnet: yes
 
 advanced settings
 - admin password:

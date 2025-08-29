@@ -192,6 +192,8 @@ Create new phone number
 
 ## Create credential
 
+Have a credential in twilio-secrets.md, currently not under version control.
+
 List the Credential Lists to get the SID of "sip-direct".
 
     twilio api:core:sip:credential-lists:list
