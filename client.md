@@ -36,6 +36,8 @@ This is almost always
 
 # Set up Linksys PAP or SPA-2102
 
+Note: This may allow users to flash into a nonworking dialtone, we want the equivalent of Grandstream's "Send Hook Flash Event".
+
 - {dialplan} for dialtone if emergency calls are enabled:
   - XXX need all 3 digit, why restrict, see grandstream
   - (911|933|1[2-9]xxxxxxxxx|0111[2-9]xxxxxxxxx|[2-9]xxxxxxxxx|*|#|0)
@@ -67,6 +69,8 @@ This is almost always
 - Dial plan: {dialplan}
 
 # Set up Grandstream HT801v2
+
+Note: This may allow users to flash into a nonworking dialtone, we want the equivalent of the HT801's "Send Hook Flash Event".
 
 ## Have attributes
 
@@ -117,9 +121,10 @@ basic settings
   - disable telnet: yes
 
 advanced settings
+- enable strict password rules: no
+- required number of character classes: 0
+  - note: do these two settings and then reboot before continuting
 - admin password:
-- ht802
-  - enable strict password rules: no
 - firmware server path: blank
 - config server path: blank
 - automatic upgrade: no
@@ -146,13 +151,17 @@ fxs port
 - Disable Call-Waiting Tone: yes
 - Use # As Dial Key: no
 - Disable # As Redial Key: yes
-- Hook Flash Timing: minimum: 500 maximum: 500
+- Dial Plan: {dialplan}
+- Send Hook Flash Event: yes
 - Offhook Auto-Dial: {autodial}
 - Offhook Auto-Dial Delay: {autodialdelay}
-- Dial Plan: {dialplan}
+- Enable Hook Flash: no
+- Hook Flash Timing: minimum: 500 maximum: 500
 
 
 # Set up Polycom SoundPoint IP 501
+
+Note: This may allow users to flash into a nonworking dialtone, we want the equivalent of Grandstream's "Send Hook Flash Event".
 
 ## Have attributes
 
@@ -208,6 +217,7 @@ fxs port
 
 Notes
 
+- This may allow users to flash into a nonworking dialtone, we want the equivalent of Grandstream's "Send Hook Flash Event".
 - https://h30434.www3.hp.com/t5/Desk-and-IP-Conference-Phones/FAQ-How-can-I-setup-my-Phone-Provisioning-Download-Upgrade/td-p/8763442
 - https://support.hp.com/us-en/poly
 - https://h30434.www3.hp.com/t5/Desk-and-IP-Conference-Phones/FAQ-How-can-I-setup-my-Phone-Provisioning-Download-Upgrade/td-p/8763442?attachment-id=15182

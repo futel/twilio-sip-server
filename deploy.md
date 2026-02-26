@@ -61,10 +61,10 @@ Note that we are not setting "--public-application-connect-enabled false", becau
 
 ## Create new stage and prod SIP domains
 
-Have the AWS API Gateway URLs for outgoing calls for stage and prod as described in dialplan-functions README-deploy, e.g.
+Have the AWS API Gateway URLs for outgoing calls for stage and prod as described in dialplan-functions doc/DEPLOY.md, e.g.
 
     https://stage.dialplans.phu73l.net/dial_outgoing
-    https://stage.dialplans.phu73l.net/dial_sip_e164
+    https://prod.dialplans.phu73l.net/dial_outgoing
 
 Create the SIP Domains.
 
@@ -128,7 +128,7 @@ If the HTTPS interface of the dialplan-functions component changes, we must upda
 
 ## Update the Application Resources (TwiML Apps)
 
-Have the AWS API Gateway URLs for incoming calls for stage and prod as described in dialplan-functions README-deploy, e.g.
+Have the AWS API Gateway URLs for incoming calls for stage and prod as described in dialplan-functions doc/DEPLOY.md, e.g.
 
     https://stage.dialplans.phu73l.net/dial_sip_e164
 
@@ -178,6 +178,8 @@ Extension has been added to AWS Lambda as described in dialplan-functions doc/cl
 
 ## Create a phone number
 
+Do this for a client which allows incoming calls or outgoing emergency calls.
+
 Use the web GUI; the APIs may allow us to do this, but maybe not.
 
 Create new phone number
@@ -212,7 +214,7 @@ Use the web GUI.
 
 ## Delete credential
 
-Use the web gui.
+Use the web gui to delete the credential from the "sip-direct" credential list.
 
 # Notes
 
