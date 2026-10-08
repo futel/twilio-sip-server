@@ -178,13 +178,13 @@ Extension has been added to AWS Lambda as described in dialplan-functions doc/cl
 
 ## Create a phone number
 
-Do this for a client which allows incoming calls or outgoing emergency calls.
+Do this for an extension which allows incoming calls or outgoing emergency calls, or for an incoming number. Don't do this for an extension that doesn't allow incoming calls or outgoing emergency calls.
 
 Use the web GUI; the APIs may allow us to do this, but maybe not.
 
 Create new phone number
 - friendly name: (client)
-- emergency calling: (client address)
+- emergency calling: (client address, if relevant)
 - voice configuration:
     - configure with: TwiML App
     - TwiML App: incoming-prod (or incoming-stage)
@@ -194,7 +194,7 @@ Create new phone number
 
 ## Create credential
 
-Have a credential in twilio-secrets.md, currently not under version control.
+Have a credential in twilio-secrets.md.
 
 List the Credential Lists to get the SID of "sip-direct".
 
@@ -215,6 +215,8 @@ Use the web GUI.
 ## Delete credential
 
 Use the web gui to delete the credential from the "sip-direct" credential list.
+
+Remove the credential from twilio-secrets.md.
 
 # Notes
 
