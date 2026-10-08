@@ -1,5 +1,6 @@
 """
-Use the twilio api to call our extensions regularly.
+Use the twilio api to call extension and begin a programmable voice dialplan
+published by the sip server.
 """
 
 import dotenv
