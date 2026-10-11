@@ -170,7 +170,7 @@ Update the relevant SIP Domains.
 
 # Add configuration for a new SIP client
 
-To add a new SIP client, we create or re-use a Twilio phone number and create a credential in the Twilio Credential List. We don't need to create a phone number for a client which doesn't allow incoming calls or outgoing emergency calls, and we can change a phone number later.
+To add a new SIP client, we create or re-use a Twilio phone number and create a credential in the Twilio Credential List. We don't need to create a phone number for a client which doesn't allow incoming calls or outgoing emergency calls.
 
 ## Requirements
 

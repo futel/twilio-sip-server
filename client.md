@@ -4,7 +4,7 @@
 
 ## Set up SIP client on Twilio
 
-SIP client should be set up as listed in twilio.md.
+SIP client should be set up as listed in deploy.md.
 
 ## Set up traffic
 
