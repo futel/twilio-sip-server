@@ -1,21 +1,5 @@
 """
-Use the twilio api to report whether SIP clients are registered.
-
-Twilio has no API for the registrations of a SIP Domain. The console's
-"registered SIP endpoints" tab of the domain is the only view of them, so we
-call each client and infer the state of its registration from the call:
-
-- A call to an address with no registration ends immediately as no-answer,
-  with a 32009 alert.
-- A call to a registration which Twilio can't deliver to ends after a few
-  seconds as failed, with a 32011 alert.
-- A call to a usable registration rings. We cancel it as soon as it does, so
-  the client rings for about a second.
-
-history() reports the same states from calls which have already happened,
-which costs nothing and disturbs nobody, and works because the exerciser of
-dialplan-functions calls the extensions of interest every few minutes. It is
-commented out, along with the parts of this script which only served it.
+Use the twilio api to infer whether SIP clients are registered.
 
 Usage:
     python3 registration.py
@@ -40,8 +24,6 @@ DEFAULT_FROM = "+15034681337"
 EXTENSIONS = ()
 # Credential list holding the extensions of our SIP clients.
 DEFAULT_CREDENTIAL_LIST = "sip-direct"
-# What the client hears if a human answers a probe before we cancel it.
-TWIML = '<Response><Say>Futel registration test.</Say><Hangup/></Response>'
 # Statuses which mean the call is over.
 FINAL_STATUSES = ('completed', 'failed', 'busy', 'no-answer', 'canceled')
 # Statuses which mean the call reached the client.
@@ -210,14 +192,20 @@ def probe(client, extension, args):
     We cancel the call as soon as it rings, so the client rings for about a
     second, or not at all.
     """
-    since = (datetime.datetime.now(datetime.timezone.utc)
-             - datetime.timedelta(minutes=1))
+    to_uri = sip_uri(extension, args.stage)
+    context = "community_outgoing"
+    context_url = "https://{stage}.dialplans.phu73l.net/ivr/{context}".format(
+        stage=args.stage, context=context)
+    # What the client hears if a human answers a call before we cancel it.
+    #twiml = '<Response><Say>Futel registration test.</Say><Hangup/></Response>'
+
     try:
         call = client.calls.create(
-            to=sip_uri(extension, args.stage),
+            to=to_uri,
             from_=DEFAULT_FROM,
             timeout=args.timeout,
-            twiml=TWIML)
+            url=context_url,
+        )
     except TwilioRestException as exception:
         print("{} {} - - {} -".format(extension, UNKNOWN, exception.code))
         return UNKNOWN
@@ -241,6 +229,8 @@ def probe(client, extension, args):
         status = client.calls(call.sid).fetch().status
 
     # The call ended without us seeing it ring, so ask Twilio what happened.
+    since = (datetime.datetime.now(datetime.timezone.utc)
+             - datetime.timedelta(minutes=1))
     call = client.calls(call.sid).fetch()
     codes = call_codes(client, call.sid, since)
     state_ = state(call, codes)

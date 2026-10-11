@@ -1,6 +1,6 @@
 # registration.py
 
-Call clients to infer sip registration.
+Call SIP clients with the twilio api to infer whether they are registered.
 
 # Setup
 
