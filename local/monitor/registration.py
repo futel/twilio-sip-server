@@ -235,33 +235,28 @@ def probe(client, extension, args):
     codes = call_codes(client, call.sid, since)
     state_ = state(call, codes)
     report(call, codes, extension, state_)
-    return state_
 
+def history(client, extension, codes, _since, args):
+    """Report on the recent calls of a SIP client and return its state."""
+    calls = client.calls.list(
+        to=sip_uri(extension, args.stage),
+        limit=8)
+    if not calls:
+        print("{} {}".format(extension, NO_DATA))
+        sys.stdout.flush()
+        return NO_DATA
+    for call in calls:
+        call_codes = codes.get(call.sid, [])
+        state_ = state(call, call_codes)
+        report(call, call_codes, extension, state_)
 
-# def history(client, extension, codes, since, args):
-#     """Report on the recent calls of a SIP client and return its state."""
-#     calls = client.calls.list(
-#         to=sip_uri(extension, args.stage),
-#         start_time_after=since,
-#         limit=args.calls)
-#     if not calls:
-#         print("{} {}".format(extension, NO_DATA))
-#         sys.stdout.flush()
-#         return NO_DATA
-#     states = []
-#     for call in calls:
-#         call_codes = codes.get(call.sid, [])
-#         states.append(state(call, call_codes))
-#         report(call, call_codes, extension, states[-1])
-#     return states[0]
-
-# def error_codes(client, since):
-#     """Return a map of resource sid to the error codes of all of its alerts."""
-#     codes = {}
-#     for alert in client.monitor.v1.alerts.list(
-#             start_date=since, limit=ALERT_LIMIT):
-#         codes.setdefault(alert.resource_sid, []).append(str(alert.error_code))
-#     return codes
+def error_codes(client, since):
+    """Return a map of resource sid to the error codes of all of its alerts."""
+    codes = {}
+    for alert in client.monitor.v1.alerts.list(
+            start_date=since, limit=ALERT_LIMIT):
+        codes.setdefault(alert.resource_sid, []).append(str(alert.error_code))
+    return codes
 
 def main(argv=None):
     args = parse_args(argv)
@@ -271,16 +266,13 @@ def main(argv=None):
 
     extensions = EXTENSIONS or credential_list_extensions(
         client, DEFAULT_CREDENTIAL_LIST)
-    # since = (datetime.datetime.now(datetime.timezone.utc)
-    #          - datetime.timedelta(hours=args.hours))
-    # codes = error_codes(client, since)
+    since = (datetime.datetime.now(datetime.timezone.utc)
+             - datetime.timedelta(days=64))
+    codes = error_codes(client, since)
 
-    states = []
     for extension in extensions:
-        states.append(probe(client, extension, args))
-        # states.append(history(client, extension, codes, since, args))
-
-    print(states)
+        #probe(client, extension, args)
+        history(client, extension, codes, since, args)
 
 if __name__ == "__main__":
     sys.exit(main())
