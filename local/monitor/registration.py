@@ -35,6 +35,8 @@ EXTENSIONS = (
     'souwester',
     'street-roots-one')
 
+# Hours of history events to check.
+HISTORY_HOURS=24
 # Credential list holding the extensions of our SIP clients.
 DEFAULT_CREDENTIAL_LIST = "sip-direct"
 # Final statuses which mean the call got as far as the client.
@@ -174,11 +176,10 @@ def report(call, extension, state_):
         t))
     sys.stdout.flush()
 
-def history(client, extension, codes, limit, args):
+def history(client, extension, codes, hours, args):
     """Report on the recent calls of a SIP client and return its state."""
-    # XXX use module constant for this hardcoded value
     since = (datetime.datetime.now(datetime.timezone.utc)
-             - datetime.timedelta(hours=24))
+             - datetime.timedelta(hours=hours))
     calls = client.calls.list(
         to=sip_uri(extension, args.stage), start_time_after=since)
     if not calls:
@@ -191,6 +192,7 @@ def history(client, extension, codes, limit, args):
 def error_codes(client):
     """Return a map of resource sid to the error codes of all of its alerts."""
     codes = {}
+    # XXX limit this?
     for alert in client.monitor.v1.alerts.list(limit=ALERT_LIMIT):
         codes.setdefault(alert.resource_sid, []).append(str(alert.error_code))
     return codes
@@ -207,7 +209,7 @@ def main(argv=None):
 
     for extension in extensions:
         #probe.probe(client, extension, args)
-        (call, state_) = history(client, extension, codes, limit=1, args=args)
+        (call, state_) = history(client, extension, codes, hours=HISTORY_HOURS, args=args)
         if state_ in (UNREGISTERED, UNREACHABLE, UNKNOWN, None):
             report(call, extension, state_)
 
