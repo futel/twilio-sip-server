@@ -140,7 +140,7 @@ def state(call, codes):
     """
     Return what a call says about the registration of the address it dialed.
 
-    codes are the error codes of the alerts of the call, if we have them.
+    codes are the error codes of the alerts for this call, if we have them.
     """
     code = registration_code(codes)
     if code:
@@ -185,15 +185,19 @@ def history(client, extension, codes, hours, args):
     if not calls:
         return (None, None)
     for call in calls:
+        # Get the codes which are relevant to this call.
         call_codes = codes.get(call.sid, [])
+        # Get the state for this call from the call and the codes.
         state_ = state(call, call_codes)
         return (call, state_)
 
-def error_codes(client):
-    """Return a map of resource sid to the error codes of all of its alerts."""
+def error_codes(client, hours):
+    """Return a map of resource sid to the error codes of its alerts from the
+    last hours hours."""
+    since = (datetime.datetime.now(datetime.timezone.utc)
+             - datetime.timedelta(hours=hours))
     codes = {}
-    # XXX limit this?
-    for alert in client.monitor.v1.alerts.list(limit=ALERT_LIMIT):
+    for alert in client.monitor.v1.alerts.list(start_date=since):
         codes.setdefault(alert.resource_sid, []).append(str(alert.error_code))
     return codes
 
@@ -205,7 +209,7 @@ def main(argv=None):
 
     extensions = EXTENSIONS or credential_list_extensions(
         client, DEFAULT_CREDENTIAL_LIST)
-    codes = error_codes(client)
+    codes = error_codes(client, hours=HISTORY_HOURS)
 
     for extension in extensions:
         #probe.probe(client, extension, args)
