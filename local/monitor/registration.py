@@ -176,10 +176,8 @@ def report(call, extension, state_):
         t))
     sys.stdout.flush()
 
-def history(client, extension, codes, hours, args):
+def history(client, extension, codes, since, args):
     """Report on the recent calls of a SIP client and return its state."""
-    since = (datetime.datetime.now(datetime.timezone.utc)
-             - datetime.timedelta(hours=hours))
     calls = client.calls.list(
         to=sip_uri(extension, args.stage), start_time_after=since)
     if not calls:
@@ -191,11 +189,9 @@ def history(client, extension, codes, hours, args):
         state_ = state(call, call_codes)
         return (call, state_)
 
-def error_codes(client, hours):
-    """Return a map of resource sid to the error codes of its alerts from the
-    last hours hours."""
-    since = (datetime.datetime.now(datetime.timezone.utc)
-             - datetime.timedelta(hours=hours))
+def error_codes(client, since):
+    """Return a map of resource sid to the error codes of its alerts since
+    since."""
     codes = {}
     for alert in client.monitor.v1.alerts.list(start_date=since):
         codes.setdefault(alert.resource_sid, []).append(str(alert.error_code))
@@ -209,11 +205,13 @@ def main(argv=None):
 
     extensions = EXTENSIONS or credential_list_extensions(
         client, DEFAULT_CREDENTIAL_LIST)
-    codes = error_codes(client, hours=HISTORY_HOURS)
+    since = (datetime.datetime.now(datetime.timezone.utc)
+             - datetime.timedelta(hours=HISTORY_HOURS))
+    codes = error_codes(client, since=since)
 
     for extension in extensions:
         #probe.probe(client, extension, args)
-        (call, state_) = history(client, extension, codes, hours=HISTORY_HOURS, args=args)
+        (call, state_) = history(client, extension, codes, since=since, args=args)
         if state_ in (UNREGISTERED, UNREACHABLE, UNKNOWN, None):
             report(call, extension, state_)
 
