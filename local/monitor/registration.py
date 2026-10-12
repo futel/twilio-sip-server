@@ -9,25 +9,34 @@ import argparse
 import datetime
 import os
 import sys
-import time
 
 import dotenv
-from twilio.base.exceptions import TwilioRestException
 from twilio.rest import Client
+
+import probe
 
 dotenv.load_dotenv(os.path.join(os.path.dirname(__file__), '.env'))
 
-# Twilio number to probe from, must be a number on the account.
-DEFAULT_FROM = "+15034681337"
 # Extensions to report on, or empty to report on every extension in the
 # credential list.
-EXTENSIONS = ()
+EXTENSIONS = (
+    'ainsworth',
+    'alleytwentyseventh',
+    'brazee',
+    'breckenridge',
+    'central',
+    'cesar-chavez',
+    'clinton',
+    'eighth',
+    'fiftyeighth',
+    'fortysecond',
+    'killingsworth',
+    'microcosm',
+    'souwester',
+    'street-roots-one')
+
 # Credential list holding the extensions of our SIP clients.
 DEFAULT_CREDENTIAL_LIST = "sip-direct"
-# Statuses which mean the call is over.
-FINAL_STATUSES = ('completed', 'failed', 'busy', 'no-answer', 'canceled')
-# Statuses which mean the call reached the client.
-RINGING_STATUSES = ('ringing', 'in-progress')
 # Final statuses which mean the call got as far as the client.
 REACHED_STATUSES = ('completed', 'busy', 'no-answer', 'canceled')
 # Alert error codes about the registration of the address we dialed. The
@@ -41,9 +50,6 @@ UNREACHABLE_ERROR_CODE = '32011'
 # Alerts to fetch when looking up the alerts of calls. Alerts are listed most
 # recent first, and this is about a month of them.
 ALERT_LIMIT = 1000
-# A probed call's alerts are buffered, so we retry the lookup.
-ALERT_TRIES = 5
-ALERT_INTERVAL = 3
 
 REGISTERED = 'registered'
 UNREGISTERED = 'unregistered'
@@ -153,108 +159,39 @@ def state(call, codes):
     # The call failed, and we don't have an alert saying why.
     return UNKNOWN
 
-
-def report(call, codes, extension, state_):
+def report(call, extension, state_):
     """Print a line about what a call says about an extension."""
-    seconds = ring_seconds(call)
-    print("{} {} {} {} {} {}".format(
+    if call:
+        status = call.status
+        t = call.start_time or call.date_created
+    else:
+        status = None
+        t = None
+    print("{} {} {} {}".format(
         extension,
         state_,
-        call.status,
-        '-' if seconds is None else int(seconds),
-        registration_code(codes) or '-',
-        call.start_time or call.date_created))
+        status,
+        t))
     sys.stdout.flush()
 
-
-def call_codes(client, call_sid, since):
-    """
-    Return the error codes of the alerts of the call.
-
-    Alerts are buffered, so we retry for a while before giving up.
-    """
-    for _ in range(ALERT_TRIES):
-        codes = [
-            str(alert.error_code)
-            for alert in client.monitor.v1.alerts.list(
-                start_date=since, limit=ALERT_LIMIT)
-            if alert.resource_sid == call_sid]
-        if codes:
-            return codes
-        time.sleep(ALERT_INTERVAL)
-    return []
-
-
-def probe(client, extension, args):
-    """
-    Call a SIP client, report on it and return its state.
-
-    We cancel the call as soon as it rings, so the client rings for about a
-    second, or not at all.
-    """
-    to_uri = sip_uri(extension, args.stage)
-    context = "community_outgoing"
-    context_url = "https://{stage}.dialplans.phu73l.net/ivr/{context}".format(
-        stage=args.stage, context=context)
-    # What the client hears if a human answers a call before we cancel it.
-    #twiml = '<Response><Say>Futel registration test.</Say><Hangup/></Response>'
-
-    try:
-        call = client.calls.create(
-            to=to_uri,
-            from_=DEFAULT_FROM,
-            timeout=args.timeout,
-            url=context_url,
-        )
-    except TwilioRestException as exception:
-        print("{} {} - - {} -".format(extension, UNKNOWN, exception.code))
-        return UNKNOWN
-
-    status = call.status
-    while status not in FINAL_STATUSES:
-        if status in RINGING_STATUSES and not args.no_cancel:
-            # The call reached the client, so it is registered. Hang up
-            # before a human has to.
-            try:
-                client.calls(call.sid).update(status='completed')
-            except TwilioRestException:
-                # The call ended on its own while we were canceling it.
-                pass
-            print("{} {} {} - - {}".format(
-                extension, REGISTERED, status,
-                datetime.datetime.now(datetime.timezone.utc)))
-            sys.stdout.flush()
-            return REGISTERED
-        time.sleep(args.poll)
-        status = client.calls(call.sid).fetch().status
-
-    # The call ended without us seeing it ring, so ask Twilio what happened.
-    since = (datetime.datetime.now(datetime.timezone.utc)
-             - datetime.timedelta(minutes=1))
-    call = client.calls(call.sid).fetch()
-    codes = call_codes(client, call.sid, since)
-    state_ = state(call, codes)
-    report(call, codes, extension, state_)
-
-def history(client, extension, codes, _since, args):
+def history(client, extension, codes, limit, args):
     """Report on the recent calls of a SIP client and return its state."""
+    # XXX use module constant for this hardcoded value
+    since = (datetime.datetime.now(datetime.timezone.utc)
+             - datetime.timedelta(hours=24))
     calls = client.calls.list(
-        to=sip_uri(extension, args.stage),
-        limit=8)
+        to=sip_uri(extension, args.stage), start_time_after=since)
     if not calls:
-        print("{} {}".format(extension, NO_DATA))
-        sys.stdout.flush()
-        return NO_DATA
+        return (None, None)
     for call in calls:
         call_codes = codes.get(call.sid, [])
         state_ = state(call, call_codes)
-        report(call, call_codes, extension, state_)
+        return (call, state_)
 
-def error_codes(client, since):
+def error_codes(client):
     """Return a map of resource sid to the error codes of all of its alerts."""
     codes = {}
-    for alert in client.monitor.v1.alerts.list(
-            start_date=since, limit=ALERT_LIMIT):
+    for alert in client.monitor.v1.alerts.list(limit=ALERT_LIMIT):
         codes.setdefault(alert.resource_sid, []).append(str(alert.error_code))
     return codes
 
@@ -266,13 +203,13 @@ def main(argv=None):
 
     extensions = EXTENSIONS or credential_list_extensions(
         client, DEFAULT_CREDENTIAL_LIST)
-    since = (datetime.datetime.now(datetime.timezone.utc)
-             - datetime.timedelta(days=64))
-    codes = error_codes(client, since)
+    codes = error_codes(client)
 
     for extension in extensions:
-        #probe(client, extension, args)
-        history(client, extension, codes, since, args)
+        #probe.probe(client, extension, args)
+        (call, state_) = history(client, extension, codes, limit=1, args=args)
+        if state_ in (UNREGISTERED, UNREACHABLE, UNKNOWN, None):
+            report(call, extension, state_)
 
 if __name__ == "__main__":
     sys.exit(main())
