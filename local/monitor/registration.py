@@ -49,9 +49,6 @@ UNREGISTERED_ERROR_CODE = '32009'
 # Twilio can't deliver to the contact address in it. Our clients do this when
 # they register a private address, eg sips:ext@192.168.0.13:5060.
 UNREACHABLE_ERROR_CODE = '32011'
-# Alerts to fetch when looking up the alerts of calls. Alerts are listed most
-# recent first, and this is about a month of them.
-ALERT_LIMIT = 1000
 
 REGISTERED = 'registered'
 UNREGISTERED = 'unregistered'
