@@ -1,6 +1,7 @@
 # registration.py
 
-Call SIP clients with the twilio api to infer whether they are registered.
+Get the call status of SIP clients with the twilio api to report on recent
+incoming and outgoing events, infer registration status.
 
 # Setup
 
@@ -37,8 +38,10 @@ configured rather than the ones we expect to be registered now. Every one of
 them is called, so set EXTENSIONS before running this where a ringing phone
 would disturb somebody.
 
-A line is printed per call, of extension, state, call status, seconds spent
-ringing, registration alert error code and time. The states are:
+A line is printed per call, of extension, direction, state, call status and
+time. The direction is "to" for a call dialed to the client, which is what
+the registration states are inferred from, or "from" for a call the client
+placed itself. The states are:
 
 - registered: the call rang the client.
 - unreachable: 32011, there is a registration, but Twilio can't deliver to
@@ -49,6 +52,12 @@ ringing, registration alert error code and time. The states are:
   is what dialing an address with no registration looks like.
 - unknown: a call which failed with no alert explaining it, eg because it was
   dialed through an edge the client isn't registered through (32221).
+- originated: on a "from" line only, a call the client placed. It says the
+  client is alive and authenticating to the SIP domain, but nothing about
+  whether Twilio can ring it, because the address it dialed is a phone number
+  rather than the client. A "from" line with no state means the client placed
+  no calls in the window, which suggests it is really down rather than merely
+  unreachable.
 
 Options:
 - --stage: prod (default) or stage, selects the SIP domain. Clients register
@@ -57,10 +66,3 @@ Options:
   fails, default 15.
 - --poll: seconds between call status fetches, default 0.5.
 - --no-cancel: let a client ring until it answers or we time out.
-
-The history() function of the script reports the same states from calls which
-have already happened, without placing any, which costs nothing and disturbs
-nobody, and works because the exerciser of dialplan-functions calls the
-extensions of interest every few minutes. It is commented out, along with the
---hours and --calls arguments and the error_codes() function, which only
-served it.

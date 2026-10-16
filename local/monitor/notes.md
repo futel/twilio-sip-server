@@ -1,4 +1,4 @@
-Twilio has no API for a SIP Domain's registrations — the console's "registered SIP endpoints" tab is the only view, and the SDK's SIP tree only has credential lists, IP ACLs and auth mappings. So local/monitor has to infer the state from calls. I checked your account's real data and the three signatures are clean and distinguishable:
+Twilio has no API for a SIP Domain's registrations, so we have to infer the state from calls:
 
 ┌──────────────────────────────────┬───────────────────────────────┬──────────────────┬───────┐
 │          what it means           │          call status          │    start→end     │ alert │
@@ -10,14 +10,7 @@ Twilio has no API for a SIP Domain's registrations — the console's "registered
 │ no registration at all           │ no-answer                     │ 0s               │ 32009 │
 └──────────────────────────────────┴───────────────────────────────┴──────────────────┴───────┘
 
-The duration field is useless here (always 0 for unanswered calls), so the ring time has to be computed from start_time/end_time. Note that an unregistered dial comes back as no-answer, not failed — I verified that with a probe to a nonexistent extension on the stage domain (status no-answer, 0s, alert 32009). That's the opposite of what outbound.py's comment guesses.
-
-What I built
-
-local/monitor/registration.py, with two modes:
-
-- default (passive, no calls placed): reads recent calls per extension plus the debugger alerts and reports the state. This works for free because the dialplan-functions exerciser already calls every extension of interest every ~10 minutes.
-- --probe: places the calls itself and cancels each one the instant it reaches ringing, so a client rings for about a second instead of the exerciser's 20.
+The duration field is useless here (always 0 for unanswered calls), so the ring time has to be computed from start_time/end_time. Note that an unregistered dial comes back as no-answer, not failed — I verified that with a probe to a nonexistent extension on the stage domain (status no-answer, 0s, alert 32009).
 
 Current fleet state (last 24h, run against prod)
 
@@ -40,9 +33,4 @@ Unregistered: alleymaple, dome-workshop, street-roots-two, test-one. Registered 
 
 Two other things the alert log turned up while I was in there: https://prod.dialplans.phu73l.net/ops/call_status_exercise is returning 502 (58 × alert 15003 in 14 days), so the exerciser's status callbacks are being dropped — the connected/not-connected signal already exists and is going nowhere. And /dial_outgoing returned 502 296 times in the same period (alert 11200).
 
-Caveats
-
-- The probe's ringing branch is unverified against a live client — I didn't want to ring a payphone to test it. Say the word and I'll run --probe against an extension you pick (dome-office looks like the safe candidate).
-- Twilio drops repeated identical alerts, so a call with no alert is classified from its ring time alone: an instant no-answer is reported as ll-founded) guess. Alerts are onlyretained 30 days; call records last 13 months.
-
-Sources: SIP registration, error 32009, error 32011, error 32221
+Twilio drops repeated identical alerts, so a call with no alert is classified from its ring time alone: an instant no-answer is reported as ll-founded) guess. Alerts are onlyretained 30 days; call records last 13 months.

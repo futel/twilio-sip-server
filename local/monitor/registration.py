@@ -55,6 +55,14 @@ UNREGISTERED = 'unregistered'
 UNREACHABLE = 'unreachable'
 UNKNOWN = 'unknown'
 # NO_DATA = 'no-data'
+# A call the client placed. It says the client is alive and authenticating,
+# but nothing about whether Twilio can ring it: an unreachable client places
+# outgoing calls just fine.
+ORIGINATED = 'originated'
+
+# Which way a reported call went, from the client's point of view.
+TO = 'to'
+FROM = 'from'
 
 ERROR_CODE_STATES = {
     UNREGISTERED_ERROR_CODE: UNREGISTERED,
@@ -93,6 +101,19 @@ def parse_args(argv=None):
 def sip_uri(extension, stage):
     """Return the SIP URI of a client extension on our SIP domain."""
     return 'sip:{}@direct-futel-{}.sip.twilio.com'.format(extension, stage)
+
+
+def originating_uri(extension, stage):
+    """
+    Return the URI which the calls a client places come from.
+
+    This is not the URI we dial to reach the client: a call the client
+    placed records the From our clients present when they register, which is
+    sips on 5061 because they register over TLS. Twilio matches the from
+    filter exactly, so it has to be the whole URI, port and all.
+    """
+    return 'sips:{}@direct-futel-{}.sip.twilio.com:5061'.format(
+        extension, stage)
 
 
 def credential_list_extensions(client, friendly_name):
@@ -158,7 +179,7 @@ def state(call, codes):
     # The call failed, and we don't have an alert saying why.
     return UNKNOWN
 
-def report(call, extension, state_):
+def report(call, extension, state_, direction=TO):
     """Print a line about what a call says about an extension."""
     if call:
         status = call.status
@@ -166,25 +187,47 @@ def report(call, extension, state_):
     else:
         status = None
         t = None
-    print("{} {} {} {}".format(
+    print("{} {} {} {} {}".format(
         extension,
+        direction,
         state_,
         status,
         t))
     sys.stdout.flush()
 
-def history(client, extension, codes, since, args):
-    """Report on the recent calls of a SIP client and return its state."""
-    calls = client.calls.list(
-        to=sip_uri(extension, args.stage), start_time_after=since)
+def most_recent(calls):
+    """Return the most recent of the calls, or None.
+
+    Twilio lists calls most recent first.
+    """
     if not calls:
-        return (None, None)
-    for call in calls:
-        # Get the codes which are relevant to this call.
-        call_codes = codes.get(call.sid, [])
-        # Get the state for this call from the call and the codes.
-        state_ = state(call, call_codes)
-        return (call, state_)
+        return None
+    return calls[0]
+
+
+def history(client, extension, codes, since, args):
+    """
+    Return what the recent calls of a SIP client say about it.
+
+    Returns (call, state, originated): the most recent call to the client
+    and what it says about the client's registration, plus the most recent
+    call the client itself placed. A call the client placed gets no state of
+    its own, because it says nothing about the registration - the address it
+    dialed is a phone number, not the client, and an unreachable client
+    places outgoing calls just fine.
+    """
+    call = most_recent(
+        client.calls.list(
+            to=sip_uri(extension, args.stage), start_time_after=since))
+    originated = most_recent(
+        client.calls.list(
+            from_=originating_uri(extension, args.stage),
+            start_time_after=since))
+    if not call:
+        return (None, None, originated)
+    # Get the state for this call from the call and the codes which are
+    # relevant to it.
+    return (call, state(call, codes.get(call.sid, [])), originated)
 
 def error_codes(client, since):
     """Return a map of resource sid to the error codes of its alerts since
@@ -208,9 +251,15 @@ def main(argv=None):
 
     for extension in extensions:
         #probe.probe(client, extension, args)
-        (call, state_) = history(client, extension, codes, since=since, args=args)
+        (call, state_, originated) = history(
+            client, extension, codes, since=since, args=args)
         if state_ in (UNREGISTERED, UNREACHABLE, UNKNOWN, None):
             report(call, extension, state_)
+            report(
+                originated,
+                extension,
+                ORIGINATED if originated else None,
+                direction=FROM)
 
 if __name__ == "__main__":
     sys.exit(main())
